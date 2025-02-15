@@ -1,0 +1,19 @@
+spring.application.name: training-diary
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:xe
+    username: MANUEL
+    password: fuDeli93
+    driver-class-name: oracle.jdbc.OracleDriver
+    platform: oracle
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 30000
+      connection-timeout: 60000
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.OracleDialect
+    show-sql: true
