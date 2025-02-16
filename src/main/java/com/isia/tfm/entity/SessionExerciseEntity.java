@@ -2,21 +2,24 @@ package com.isia.tfm.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.io.Serializable;
 
 @Entity
 @Table(name = "SESSIONS_EXERCISES")
 @Data
-public class SessionExerciseEntity {
+@IdClass(SessionExercisePK.class)
+public class SessionExerciseEntity implements Serializable {
 
-    @Embeddable
-    public static class SessionExerciseId implements Serializable {
-        private Integer sessionId;
-        private Integer exerciseId;
-    }
+    private static final long serialVersionUID = 1L;
 
-    @EmbeddedId
-    private SessionExerciseId id;
+    @Id
+    @Column(name = "SESSION_ID", nullable = false)
+    private Integer sessionId;
+
+    @Id
+    @Column(name = "EXERCISE_ID", nullable = false)
+    private Integer exerciseId;
 
     @ManyToOne
     @JoinColumn(name = "SESSION_ID", referencedColumnName = "SESSION_ID", nullable = false, insertable = false, updatable = false)

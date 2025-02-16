@@ -10,6 +10,8 @@ import com.isia.tfm.service.UserManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,6 +31,8 @@ public class UserManagementServiceImpl implements UserManagementService {
         checkUsernameAndEmail(user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         ApplicationUserEntity applicationUserEntity = objectMapper.convertValue(user, ApplicationUserEntity.class);
+        applicationUserEntity.setBirthDate(user.getBirthday());
+        applicationUserEntity.setCreationDate(LocalDateTime.now());
         applicationUserEntity = applicationUserRespository.save(applicationUserEntity);
         if (applicationUserEntity.getUsername() != null) {
             createUser201Response.setMessage("User successfully created.");
