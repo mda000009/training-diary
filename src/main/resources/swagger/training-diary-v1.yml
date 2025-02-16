@@ -200,7 +200,7 @@ paths:
                     details:
                       errorCode: "ERROR_005"
                       description: "Server temporarily out of service."
-                      
+
   /createSessions:
     post:
       summary: Create a list of sessions
@@ -425,7 +425,7 @@ paths:
                     details:
                       errorCode: "ERROR_005"
                       description: "Server temporarily out of service."
-                      
+
   /getUser:
     get:
       summary: Get the user information
@@ -506,7 +506,7 @@ paths:
                     details:
                       errorCode: "ERROR_005"
                       description: "Server temporarily out of service."
-                      
+
   /getSession/{sessionId}:
     get:
       summary: Get the session information
@@ -522,7 +522,7 @@ paths:
           schema:
             type: integer
       security:
-        - BearerAuth: []          
+        - BearerAuth: []
       responses:
         '200':
           description: Session information successfully obtained.
@@ -610,7 +610,7 @@ paths:
                     details:
                       errorCode: "ERROR_005"
                       description: "Server temporarily out of service."
-                      
+
   /getExercise/{exerciseId}:
     get:
       summary: Get the exercise information
@@ -626,7 +626,7 @@ paths:
           schema:
             type: integer
       security:
-        - BearerAuth: []          
+        - BearerAuth: []
       responses:
         '200':
           description: Exercise information successfully obtained.
@@ -714,14 +714,14 @@ paths:
                     details:
                       errorCode: "ERROR_005"
                       description: "Server temporarily out of service."
-                  
+
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      
+
   schemas:
     User:
       type: object
@@ -773,7 +773,7 @@ components:
         - birthday
         - gender
         - email
-        
+
     GetUser:
       type: object
       properties:
@@ -870,10 +870,6 @@ components:
           type: integer
           description: Repetitions in reserve (RIR).
           example: 1
-        restTime:
-          type: integer
-          description: Rest time between sets (in seconds).
-          example: 120
       required:
         - setNumber
         - exerciseId
@@ -892,7 +888,7 @@ components:
       required:
         - exerciseId
         - exerciseName
-        
+
     GetExercise:
       type: object
       properties:
@@ -900,7 +896,7 @@ components:
           type: string
           description: Name of the exercise.
           example: "Bench Press"
-            
+
     GetSession:
       type: object
       properties:
@@ -919,7 +915,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TrainingVariable'
-            
+
     Error:
       type: object
       properties:
