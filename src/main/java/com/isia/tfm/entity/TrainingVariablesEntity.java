@@ -3,10 +3,14 @@ package com.isia.tfm.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "TRAINING_VARIABLES")
 @Data
-public class TrainingVariablesEntity {
+public class TrainingVariablesEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,15 +20,13 @@ public class TrainingVariablesEntity {
     @Column(name = "SET_NUMBER", nullable = false)
     private Integer setNumber;
 
-    @EmbeddedId
-    private SessionExerciseEntity.SessionExerciseId sessionExerciseId;
+    @ManyToOne
+    @JoinColumn(name = "SESSION_ID", referencedColumnName = "SESSION_ID", nullable = false)
+    private SessionExerciseEntity sessionExerciseBySessionEntity;
 
     @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "SESSION_ID", referencedColumnName = "sessionId", nullable = false, insertable = false, updatable = false),
-            @JoinColumn(name = "EXERCISE_ID", referencedColumnName = "exerciseId", nullable = false, insertable = false, updatable = false)
-    })
-    private SessionExerciseEntity sessionExerciseEntity;
+    @JoinColumn(name = "EXERCISE_ID", referencedColumnName = "EXERCISE_ID", nullable = false)
+    private SessionExerciseEntity sessionExerciseByExerciseEntity;
 
     @Column(name = "WEIGHT")
     private Double weight;
