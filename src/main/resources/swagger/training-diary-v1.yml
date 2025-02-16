@@ -46,9 +46,6 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-                    details:
-                      errorCode: "ERROR_002"
-                      description: "The email field has an incorrect format."
         '409':
           description: Conflict.
           content:
@@ -62,9 +59,6 @@ paths:
                     status: "409"
                     error: "Conflict"
                     message: "There are conflicts in some fields."
-                    details:
-                      errorCode: "ERROR_003"
-                      description: "The email already exists."
         '500':
           description: Internal Server Error.
           content:
@@ -78,9 +72,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -94,9 +85,6 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
 
   /login:
     post:
@@ -149,9 +137,6 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-                    details:
-                      errorCode: "ERROR_006"
-                      description: "The username field must be of type string."
         '401':
           description: Unauthorized.
           content:
@@ -165,9 +150,6 @@ paths:
                     status: "401"
                     error: "Unauthorized"
                     message: "The username or password is incorrect."
-                    details:
-                      errorCode: "ERROR_007"
-                      description: "The username or password is incorrect."
         '500':
           description: Internal Server Error.
           content:
@@ -181,9 +163,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -197,9 +176,6 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
 
   /createSessions:
     post:
@@ -246,9 +222,6 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-                    details:
-                      errorCode: "ERROR_010"
-                      description: "The sessionDate field must have the format YYYY-MM-DD."
         '401':
           description: Unauthorized.
           content:
@@ -262,9 +235,6 @@ paths:
                     status: "401"
                     error: "Unauthorized"
                     message: "Unauthorized to perform the operation."
-                    details:
-                      errorCode: "ERROR_025"
-                      description: "Unauthorized to perform the operation."
         '409':
           description: Conflict.
           content:
@@ -278,9 +248,6 @@ paths:
                     status: "409"
                     error: "Conflict"
                     message: "There are conflicts with some fields."
-                    details:
-                      errorCode: "ERROR_011"
-                      description: "The sessionDate field must be between the start and end date of the microcycle."
         '500':
           description: Internal Server Error.
           content:
@@ -294,9 +261,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -310,9 +274,6 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
   /createExercises:
     post:
       summary: Create a list of exercises
@@ -358,9 +319,6 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-                    details:
-                      errorCode: "ERROR_012"
-                      description: "The exerciseName field must be of type string."
         '401':
           description: Unauthorized.
           content:
@@ -374,9 +332,6 @@ paths:
                     status: "401"
                     error: "Unauthorized"
                     message: "Unauthorized to perform the operation."
-                    details:
-                      errorCode: "ERROR_025"
-                      description: "Unauthorized to perform the operation."
         '409':
           description: Conflict.
           content:
@@ -390,9 +345,6 @@ paths:
                     status: "409"
                     error: "Conflict"
                     message: "There are conflicts with some fields."
-                    details:
-                      errorCode: "ERROR_013"
-                      description: "The exerciseId already exists."
         '500':
           description: Internal Server Error.
           content:
@@ -406,9 +358,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -422,9 +371,6 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
 
   /getUser:
     get:
@@ -455,9 +401,6 @@ paths:
                     status: "401"
                     error: "Unauthorized"
                     message: "Unauthorized to perform the operation."
-                    details:
-                      errorCode: "ERROR_025"
-                      description: "Unauthorized to perform the operation."
         '404':
           description: Not Found.
           content:
@@ -471,9 +414,6 @@ paths:
                     status: "404"
                     error: "Not Found"
                     message: "User not found."
-                    details:
-                      errorCode: "ERROR_024"
-                      description: "User not found."
         '500':
           description: Internal Server Error.
           content:
@@ -487,9 +427,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -503,9 +440,6 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
 
   /getSession/{sessionId}:
     get:
@@ -543,9 +477,6 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-                    details:
-                      errorCode: "ERROR_020"
-                      description: "The sessionId field must be of type int."
         '401':
           description: Unauthorized.
           content:
@@ -559,9 +490,6 @@ paths:
                     status: "401"
                     error: "Unauthorized"
                     message: "Unauthorized to perform the operation."
-                    details:
-                      errorCode: "ERROR_025"
-                      description: "Unauthorized to perform the operation."
         '404':
           description: Not Found.
           content:
@@ -575,9 +503,6 @@ paths:
                     status: "404"
                     error: "Not Found"
                     message: "Field sessionId not found."
-                    details:
-                      errorCode: "ERROR_021"
-                      description: "Field sessionId not found."
         '500':
           description: Internal Server Error.
           content:
@@ -591,9 +516,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -607,9 +529,6 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
 
   /getExercise/{exerciseId}:
     get:
@@ -647,9 +566,6 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-                    details:
-                      errorCode: "ERROR_022"
-                      description: "The exerciseId field must be of type int."
         '401':
           description: Unauthorized.
           content:
@@ -663,9 +579,6 @@ paths:
                     status: "401"
                     error: "Unauthorized"
                     message: "Unauthorized to perform the operation."
-                    details:
-                      errorCode: "ERROR_025"
-                      description: "Unauthorized to perform the operation."
         '404':
           description: Not Found.
           content:
@@ -679,9 +592,6 @@ paths:
                     status: "404"
                     error: "Not Found"
                     message: "Field exerciseId not found."
-                    details:
-                      errorCode: "ERROR_023"
-                      description: "Field exerciseId not found."
         '500':
           description: Internal Server Error.
           content:
@@ -695,9 +605,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -711,9 +618,6 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
 
 components:
   securitySchemes:
@@ -931,17 +835,6 @@ components:
           type: string
           description: Detailed error message.
           example: "Mandatory fields are missing or the data is invalid"
-        details:
-          type: object
-          properties:
-            errorCode:
-              type: string
-              description: Internal error code.
-              example: "ERROR_001"
-            description:
-              type: string
-              description: More detailed description of the error.
-              example: "The start date of the microcycle cannot be earlier than the start date of the mesocycle"
       required:
         - status
         - error
