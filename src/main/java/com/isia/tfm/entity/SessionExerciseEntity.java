@@ -1,6 +1,7 @@
 package com.isia.tfm.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.io.Serializable;
 @Table(name = "SESSIONS_EXERCISES")
 @Data
 @IdClass(SessionExercisePK.class)
+@AllArgsConstructor
 public class SessionExerciseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;

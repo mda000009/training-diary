@@ -1,6 +1,7 @@
 package com.isia.tfm.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,6 +9,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "TRAINING_VARIABLES")
 @Data
+@AllArgsConstructor
 public class TrainingVariablesEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
