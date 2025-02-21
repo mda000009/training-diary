@@ -1,12 +1,14 @@
 package com.isia.tfm.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "SESSIONS")
 @Data
+@AllArgsConstructor
 public class SessionEntity {
 
     @Id
