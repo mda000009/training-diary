@@ -777,6 +777,8 @@ components:
       required:
         - setNumber
         - exerciseId
+        - weight
+        - repetitions
 
     Exercise:
       type: object

@@ -30,10 +30,10 @@ public class TrainingVariablesEntity implements Serializable {
     @JoinColumn(name = "EXERCISE_ID", referencedColumnName = "EXERCISE_ID", nullable = false)
     private SessionExerciseEntity sessionExerciseByExerciseEntity;
 
-    @Column(name = "WEIGHT")
+    @Column(name = "WEIGHT", nullable = false)
     private Double weight;
 
-    @Column(name = "REPETITIONS")
+    @Column(name = "REPETITIONS", nullable = false)
     private Integer repetitions;
 
     @Column(name = "RIR")

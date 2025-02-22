@@ -23,6 +23,12 @@ public class SessionExerciseEntity implements Serializable {
     @Column(name = "EXERCISE_ID", nullable = false)
     private Integer exerciseId;
 
+    @Column(name = "TRAINING_VOLUME")
+    private Float trainingVolume;
+
+    @Column(name = "PROGRESS_IN_TRAINING_VOLUME")
+    private Float progessInTrainingVolume;
+
     @ManyToOne
     @JoinColumn(name = "SESSION_ID", referencedColumnName = "SESSION_ID", nullable = false, insertable = false, updatable = false)
     private SessionEntity sessionEntity;
