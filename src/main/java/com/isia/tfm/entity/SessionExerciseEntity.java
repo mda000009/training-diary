@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "SESSIONS_EXERCISES")
@@ -24,10 +25,10 @@ public class SessionExerciseEntity implements Serializable {
     private Integer exerciseId;
 
     @Column(name = "TRAINING_VOLUME")
-    private Float trainingVolume;
+    private BigDecimal trainingVolume;
 
     @Column(name = "PROGRESS_IN_TRAINING_VOLUME")
-    private Float progessInTrainingVolume;
+    private BigDecimal progessInTrainingVolume;
 
     @ManyToOne
     @JoinColumn(name = "SESSION_ID", referencedColumnName = "SESSION_ID", nullable = false, insertable = false, updatable = false)
