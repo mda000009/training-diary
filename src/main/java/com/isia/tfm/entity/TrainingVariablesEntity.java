@@ -3,14 +3,28 @@ package com.isia.tfm.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "TRAINING_VARIABLES")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class TrainingVariablesEntity implements Serializable {
+
+    public TrainingVariablesEntity(Integer setNumber, SessionExerciseEntity sessionExerciseBySessionEntity,
+                                   SessionExerciseEntity sessionExerciseByExerciseEntity, BigDecimal weight,
+                                   Integer repetitions, Integer rir) {
+        this.setNumber = setNumber;
+        this.sessionExerciseBySessionEntity = sessionExerciseBySessionEntity;
+        this.sessionExerciseByExerciseEntity = sessionExerciseByExerciseEntity;
+        this.weight = weight;
+        this.repetitions = repetitions;
+        this.rir = rir;
+    }
 
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +45,7 @@ public class TrainingVariablesEntity implements Serializable {
     private SessionExerciseEntity sessionExerciseByExerciseEntity;
 
     @Column(name = "WEIGHT", nullable = false)
-    private Double weight;
+    private BigDecimal weight;
 
     @Column(name = "REPETITIONS", nullable = false)
     private Integer repetitions;

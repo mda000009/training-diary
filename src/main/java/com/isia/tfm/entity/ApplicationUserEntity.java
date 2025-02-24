@@ -6,12 +6,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "APPLICATION_USERS")
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class ApplicationUserEntity {
 

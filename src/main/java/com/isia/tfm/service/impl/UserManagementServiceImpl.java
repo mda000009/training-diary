@@ -17,7 +17,6 @@ import java.util.Objects;
 
 @Service
 public class UserManagementServiceImpl implements UserManagementService {
-
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -76,5 +75,4 @@ public class UserManagementServiceImpl implements UserManagementService {
         }
         return emailFound;
     }
-
 }

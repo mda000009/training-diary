@@ -724,10 +724,10 @@ components:
     Session:
       type: object
       properties:
-        applicationUserId:
-          type: integer
-          description: ID of the user to whom the session belongs.
-          example: 1
+        username:
+          type: string
+          description: Unique username.
+          example: juanperez
         sessionId:
           type: integer
           description: Unique ID of the session.
@@ -746,7 +746,7 @@ components:
           items:
             $ref: '#/components/schemas/TrainingVariable'
       required:
-        - applicationUserId
+        - username
         - sessionId
         - sessionName
 
@@ -806,10 +806,10 @@ components:
     GetSession:
       type: object
       properties:
-        applicationUserId:
-          type: integer
-          description: ID of the user to whom the session belongs.
-          example: 1
+        username:
+          type: string
+          description: Unique username.
+          example: juanperez
         sessionName:
           type: string
           example: "Sesion 1"

@@ -11,8 +11,8 @@ import java.io.Serializable;
 @Embeddable
 @Data
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class SessionExercisePK implements Serializable {
 
     private static final long serialVersionUID = 1L;

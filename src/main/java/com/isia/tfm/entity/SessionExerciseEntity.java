@@ -3,6 +3,7 @@ package com.isia.tfm.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 @Data
 @IdClass(SessionExercisePK.class)
 @AllArgsConstructor
+@NoArgsConstructor
 public class SessionExerciseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
