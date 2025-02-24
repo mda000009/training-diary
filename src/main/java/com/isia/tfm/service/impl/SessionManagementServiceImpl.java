@@ -57,8 +57,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
                 .map(String::valueOf)
                 .orElse(null);
         if (exerciseNotCreated != null) {
-            return exerciseRepository.findAllById(exerciseToCreateList);
-            //throw new CustomException("404", "Not found", "The exercise with ID " + exerciseNotCreated + " is not created");
+            throw new CustomException("404", "Not found", "The exercise with ID " + exerciseNotCreated + " is not created");
         } else {
             return exerciseRepository.findAllById(exerciseToCreateList);
         }
