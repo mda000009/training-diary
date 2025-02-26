@@ -95,9 +95,8 @@ public class SessionManagementServiceImpl implements SessionManagementService {
                                      SessionEntity sessionEntity,
                                      List<TrainingVariable> trainingVariableList) {
         for (ExerciseEntity exerciseEntity : exerciseEntityList) {
-            SessionExerciseEntity sessionExerciseEntity = new SessionExerciseEntity(
-                    sessionEntity.getSessionId(), exerciseEntity.getExerciseId(), null,
-                    null, sessionEntity, exerciseEntity);
+            SessionExerciseEntity sessionExerciseEntity = new SessionExerciseEntity(sessionEntity.getSessionId(),
+                    exerciseEntity.getExerciseId(), null, sessionEntity, exerciseEntity);
             sessionExerciseRepository.save(sessionExerciseEntity);
             saveTrainingVariables(trainingVariableList, sessionExerciseEntity);
         }

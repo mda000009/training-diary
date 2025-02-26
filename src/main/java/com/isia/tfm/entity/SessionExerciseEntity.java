@@ -31,9 +31,6 @@ public class SessionExerciseEntity implements Serializable {
     @Column(name = "TRAINING_VOLUME")
     private BigDecimal trainingVolume;
 
-    @Column(name = "PROGRESS_IN_TRAINING_VOLUME")
-    private BigDecimal progessInTrainingVolume;
-
     @ManyToOne
     @JoinColumn(name = "SESSION_ID", referencedColumnName = "SESSION_ID", nullable = false, insertable = false, updatable = false)
     private SessionEntity sessionEntity;
