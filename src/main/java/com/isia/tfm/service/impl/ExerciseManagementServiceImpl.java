@@ -24,7 +24,10 @@ public class ExerciseManagementServiceImpl implements ExerciseManagementService 
         CreateExercises201Response createExercises201Response = new CreateExercises201Response();
         for (Exercise exercise : createExercisesRequest.getExercises()) {
             ExerciseEntity exerciseEntity = objectMapper.convertValue(exercise, ExerciseEntity.class);
-            exerciseRepository.save(exerciseEntity);
+            boolean createdExercise = exerciseRepository.findById(exerciseEntity.getExerciseId()).isPresent();
+            if (!createdExercise) {
+                exerciseRepository.save(exerciseEntity);
+            }
         }
         log.debug("Saved exercises");
         createExercises201Response.setMessage("Exercises successfully created.");

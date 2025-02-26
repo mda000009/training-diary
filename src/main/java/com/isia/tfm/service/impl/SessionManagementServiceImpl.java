@@ -85,9 +85,12 @@ public class SessionManagementServiceImpl implements SessionManagementService {
             ApplicationUserEntity applicationUserEntity = applicationUserRepository.findById(session.getUsername())
                     .orElseThrow(() -> new CustomException("404", "Not found", "User with ID " + session.getUsername() + " not found"));
             SessionEntity sessionEntity = new SessionEntity(session.getSessionId(), session.getSessionName(), session.getSessionDate(), applicationUserEntity);
-            sessionRepository.save(sessionEntity);
-            List<TrainingVariable> trainingVariableList = session.getTrainingVariables();
-            saveSessionExercises(exerciseEntityList, sessionEntity, trainingVariableList);
+            boolean createdSession = sessionRepository.findById(sessionEntity.getSessionId()).isPresent();
+            if (!createdSession) {
+                sessionRepository.save(sessionEntity);
+                List<TrainingVariable> trainingVariableList = session.getTrainingVariables();
+                saveSessionExercises(exerciseEntityList, sessionEntity, trainingVariableList);
+            }
         }
     }
 
@@ -97,8 +100,13 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         for (ExerciseEntity exerciseEntity : exerciseEntityList) {
             SessionExerciseEntity sessionExerciseEntity = new SessionExerciseEntity(sessionEntity.getSessionId(),
                     exerciseEntity.getExerciseId(), null, sessionEntity, exerciseEntity);
-            sessionExerciseRepository.save(sessionExerciseEntity);
-            saveTrainingVariables(trainingVariableList, sessionExerciseEntity);
+            boolean createdSessionExercise = sessionExerciseRepository.findById(
+                    new SessionExercisePK(sessionExerciseEntity.getSessionId(), sessionExerciseEntity.getExerciseId()))
+                    .isPresent();
+            if (!createdSessionExercise) {
+                sessionExerciseRepository.save(sessionExerciseEntity);
+                saveTrainingVariables(trainingVariableList, sessionExerciseEntity);
+            }
         }
     }
 
