@@ -109,6 +109,9 @@ paths:
                   type: string
                   description: Personal trainer email.
                   example: 0610809824@uma.es
+              required:
+                - sessions
+                - destinationEmail
       responses:
         '201':
           description: Created.
@@ -204,6 +207,8 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/Exercise'
+              required:
+                - exercises
       responses:
         '201':
           description: Created.

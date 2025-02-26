@@ -8,6 +8,7 @@ import com.isia.tfm.model.Session;
 import com.isia.tfm.model.TrainingVariable;
 import com.isia.tfm.repository.*;
 import com.isia.tfm.service.SessionManagementService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.*;
 
+@Slf4j
 @Service
 public class SessionManagementServiceImpl implements SessionManagementService {
     @Autowired
@@ -42,8 +44,19 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         List<ExerciseEntity> exerciseEntityList = getExerciseToCreateList(createSessionsRequest);
         List<Session> sessionList = createSessionsRequest.getSessions();
         saveSessions(sessionList, exerciseEntityList);
-        saveTrainingVolume(sessionList);
-        //sendTrainingSessionEmail(destinationEmail, sessionList);
+        log.debug("Saved training sessions");
+        try {
+            saveTrainingVolume(sessionList);
+            log.debug("Training volume for each exercise of each session saved");
+        } catch (Exception e) {
+            log.error("Training volume could not be calculated and saved");
+        }
+        try {
+            sendTrainingSessionEmail(createSessionsRequest.getDestinationEmail(), sessionList);
+            log.debug("An email successfully sent for each saved training session");
+        } catch (Exception e) {
+            log.error("The information email could not be sent");
+        }
         createSessions201Response.setMessage("Sessions successfully created.");
         return createSessions201Response;
     }
