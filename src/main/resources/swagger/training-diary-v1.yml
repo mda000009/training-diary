@@ -86,97 +86,6 @@ paths:
                     error: "Service Unavailable"
                     message: "Service Unavailable."
 
-  /login:
-    post:
-      summary: Authenticate a user
-      description: This endpoint allows a user to authenticate in the system using their username and password.
-      operationId: login
-      tags:
-        - User management
-      requestBody:
-        description: User credentials for login.
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  description: Username for login.
-                  example: juanperez
-                password:
-                  type: string
-                  description: User password.
-                  example: mySecurePass123
-      responses:
-        '200':
-          description: OK.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Login successful.
-                  token:
-                    type: string
-                    description: JWT token for authentication in future requests.
-                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-        '400':
-          description: Bad Request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                badRequest:
-                  summary: Invalid request error
-                  value:
-                    status: "400"
-                    error: "Bad Request"
-                    message: "There are fields that do not comply with the specified format."
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                unauthorized:
-                  summary: Unauthorized
-                  value:
-                    status: "401"
-                    error: "Unauthorized"
-                    message: "The username or password is incorrect."
-        '500':
-          description: Internal Server Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                internalServerError:
-                  summary: Internal Server Error
-                  value:
-                    status: "500"
-                    error: "Internal Server Error"
-                    message: "Internal Server Error."
-        '503':
-          description: Service Unavailable.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                serviceUnavailable:
-                  summary: Service Unavailable
-                  value:
-                    status: "503"
-                    error: "Service Unavailable"
-                    message: "Service Unavailable."
-
   /createSessions:
     post:
       summary: Create a list of sessions
@@ -196,8 +105,13 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/Session'
-      security:
-        - BearerAuth: []
+                destinationEmail:
+                  type: string
+                  description: Personal trainer email.
+                  example: 0610809824@uma.es
+              required:
+                - sessions
+                - destinationEmail
       responses:
         '201':
           description: Created.
@@ -293,8 +207,8 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/Exercise'
-      security:
-        - BearerAuth: []
+              required:
+                - exercises
       responses:
         '201':
           description: Created.
@@ -379,8 +293,6 @@ paths:
       operationId: getUser
       tags:
         - User management
-      security:
-        - BearerAuth: []
       responses:
         '200':
           description: User information successfully obtained.
@@ -455,8 +367,6 @@ paths:
           required: true
           schema:
             type: integer
-      security:
-        - BearerAuth: []
       responses:
         '200':
           description: Session information successfully obtained.
@@ -544,8 +454,6 @@ paths:
           required: true
           schema:
             type: integer
-      security:
-        - BearerAuth: []
       responses:
         '200':
           description: Exercise information successfully obtained.
@@ -620,12 +528,6 @@ paths:
                     message: "Service Unavailable."
 
 components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
   schemas:
     User:
       type: object
@@ -724,10 +626,10 @@ components:
     Session:
       type: object
       properties:
-        applicationUserId:
-          type: integer
-          description: ID of the user to whom the session belongs.
-          example: 1
+        username:
+          type: string
+          description: Unique username.
+          example: juanperez
         sessionId:
           type: integer
           description: Unique ID of the session.
@@ -746,7 +648,7 @@ components:
           items:
             $ref: '#/components/schemas/TrainingVariable'
       required:
-        - applicationUserId
+        - username
         - sessionId
         - sessionName
 
@@ -777,6 +679,8 @@ components:
       required:
         - setNumber
         - exerciseId
+        - weight
+        - repetitions
 
     Exercise:
       type: object
@@ -804,10 +708,10 @@ components:
     GetSession:
       type: object
       properties:
-        applicationUserId:
-          type: integer
-          description: ID of the user to whom the session belongs.
-          example: 1
+        username:
+          type: string
+          description: Unique username.
+          example: juanperez
         sessionName:
           type: string
           example: "Sesion 1"

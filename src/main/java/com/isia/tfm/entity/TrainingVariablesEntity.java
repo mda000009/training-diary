@@ -3,15 +3,29 @@ package com.isia.tfm.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "TRAINING_VARIABLES")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class TrainingVariablesEntity implements Serializable {
 
+    public TrainingVariablesEntity(Integer setNumber, SessionExerciseEntity sessionExercise,
+                                   BigDecimal weight, Integer repetitions, Integer rir) {
+        this.setNumber = setNumber;
+        this.sessionExercise = sessionExercise;
+        this.weight = weight;
+        this.repetitions = repetitions;
+        this.rir = rir;
+    }
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -23,17 +37,16 @@ public class TrainingVariablesEntity implements Serializable {
     private Integer setNumber;
 
     @ManyToOne
-    @JoinColumn(name = "SESSION_ID", referencedColumnName = "SESSION_ID", nullable = false)
-    private SessionExerciseEntity sessionExerciseBySessionEntity;
+    @JoinColumns({
+            @JoinColumn(name = "SESSION_ID", referencedColumnName = "SESSION_ID"),
+            @JoinColumn(name = "EXERCISE_ID", referencedColumnName = "EXERCISE_ID")
+    })
+    private SessionExerciseEntity sessionExercise;
 
-    @ManyToOne
-    @JoinColumn(name = "EXERCISE_ID", referencedColumnName = "EXERCISE_ID", nullable = false)
-    private SessionExerciseEntity sessionExerciseByExerciseEntity;
+    @Column(name = "WEIGHT", nullable = false)
+    private BigDecimal weight;
 
-    @Column(name = "WEIGHT")
-    private Double weight;
-
-    @Column(name = "REPETITIONS")
+    @Column(name = "REPETITIONS", nullable = false)
     private Integer repetitions;
 
     @Column(name = "RIR")
