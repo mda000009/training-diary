@@ -25,7 +25,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
     @Autowired
     private ExerciseRepository exerciseRepository;
     @Autowired
-    private ApplicationUserRespository applicationUserRespository;
+    private ApplicationUserRepository applicationUserRepository;
     @Autowired
     private SessionRepository sessionRepository;
     @Autowired
@@ -82,7 +82,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
     @Transactional
     private void saveSessions(List<Session> sessionList, List<ExerciseEntity> exerciseEntityList) {
         for (Session session : sessionList) {
-            ApplicationUserEntity applicationUserEntity = applicationUserRespository.findById(session.getUsername())
+            ApplicationUserEntity applicationUserEntity = applicationUserRepository.findById(session.getUsername())
                     .orElseThrow(() -> new CustomException("404", "Not found", "User with ID " + session.getUsername() + " not found"));
             SessionEntity sessionEntity = new SessionEntity(session.getSessionId(), session.getSessionName(), session.getSessionDate(), applicationUserEntity);
             sessionRepository.save(sessionEntity);

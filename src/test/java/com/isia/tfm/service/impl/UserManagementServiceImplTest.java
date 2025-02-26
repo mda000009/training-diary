@@ -5,7 +5,7 @@ import com.isia.tfm.entity.ApplicationUserEntity;
 import com.isia.tfm.exception.CustomException;
 import com.isia.tfm.model.CreateUser201Response;
 import com.isia.tfm.model.User;
-import com.isia.tfm.repository.ApplicationUserRespository;
+import com.isia.tfm.repository.ApplicationUserRepository;
 import com.isia.tfm.testutils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ public class UserManagementServiceImplTest {
     @Mock
     private PasswordEncoder passwordEncoder;
     @Mock
-    private ApplicationUserRespository applicationUserRespository;
+    private ApplicationUserRepository applicationUserRepository;
 
     @BeforeEach
     public void setUp() {
@@ -55,8 +55,8 @@ public class UserManagementServiceImplTest {
         when(passwordEncoder.encode(anyString())).thenReturn("example");
         when(objectMapper.convertValue(user, ApplicationUserEntity.class))
                 .thenReturn(applicationUserEntity);
-        when(applicationUserRespository.findAll()).thenReturn(new ArrayList<>());
-        when(applicationUserRespository.save(any(ApplicationUserEntity.class))).thenReturn(applicationUserEntity);
+        when(applicationUserRepository.findAll()).thenReturn(new ArrayList<>());
+        when(applicationUserRepository.save(any(ApplicationUserEntity.class))).thenReturn(applicationUserEntity);
 
         CreateUser201Response response = userManagementServiceImpl.createUser(user);
 
@@ -75,7 +75,7 @@ public class UserManagementServiceImplTest {
                 user.getPhoneNumber(), LocalDateTime.now());
         applicationUserEntityList.add(applicationUserEntity);
 
-        when(applicationUserRespository.findAll()).thenReturn(applicationUserEntityList);
+        when(applicationUserRepository.findAll()).thenReturn(applicationUserEntityList);
 
         CustomException e = assertThrows(CustomException.class, () -> {
             userManagementServiceImpl.createUser(user);
@@ -93,7 +93,7 @@ public class UserManagementServiceImplTest {
                 user.getPhoneNumber(), LocalDateTime.now());
         applicationUserEntityList.add(applicationUserEntity);
 
-        when(applicationUserRespository.findAll()).thenReturn(applicationUserEntityList);
+        when(applicationUserRepository.findAll()).thenReturn(applicationUserEntityList);
 
         CustomException e = assertThrows(CustomException.class, () -> {
             userManagementServiceImpl.createUser(user);

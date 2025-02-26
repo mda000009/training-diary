@@ -5,7 +5,7 @@ import com.isia.tfm.entity.ApplicationUserEntity;
 import com.isia.tfm.exception.CustomException;
 import com.isia.tfm.model.CreateUser201Response;
 import com.isia.tfm.model.User;
-import com.isia.tfm.repository.ApplicationUserRespository;
+import com.isia.tfm.repository.ApplicationUserRepository;
 import com.isia.tfm.service.UserManagementService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private ApplicationUserRespository applicationUserRespository;
+    private ApplicationUserRepository applicationUserRepository;
 
     @Override
     public CreateUser201Response createUser(User user) {
@@ -35,7 +35,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         ApplicationUserEntity applicationUserEntity = objectMapper.convertValue(user, ApplicationUserEntity.class);
         applicationUserEntity.setBirthDate(user.getBirthday());
         applicationUserEntity.setCreationDate(LocalDateTime.now());
-        applicationUserEntity = applicationUserRespository.save(applicationUserEntity);
+        applicationUserEntity = applicationUserRepository.save(applicationUserEntity);
         if (applicationUserEntity.getUsername() != null) {
             log.debug("User successfully created");
             createUser201Response.setMessage("User successfully created.");
@@ -46,7 +46,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     private void checkUsernameAndEmail(User user) {
-        List<ApplicationUserEntity> applicationUserEntityList = applicationUserRespository.findAll();
+        List<ApplicationUserEntity> applicationUserEntityList = applicationUserRepository.findAll();
         if (searchUsername(user, applicationUserEntityList)) {
             log.error("The username is already in use");
             throw new CustomException("409", "Conflict", "The username is already in use");
