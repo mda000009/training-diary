@@ -9,9 +9,13 @@ import com.isia.tfm.model.TrainingVariable;
 import com.isia.tfm.repository.*;
 import com.isia.tfm.service.SessionManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -26,21 +30,20 @@ public class SessionManagementServiceImpl implements SessionManagementService {
     private SessionExerciseRepository sessionExerciseRepository;
     @Autowired
     private TrainingVariablesRepository trainingVariablesRepository;
+    @Autowired
+    private JavaMailSender emailSender;
+
+    @Value("${spring.mail.username}")
+    private String senderEmail;
 
     @Override
-    @Transactional
     public CreateSessions201Response createSessions(CreateSessionsRequest createSessionsRequest) {
         CreateSessions201Response createSessions201Response = new CreateSessions201Response();
         List<ExerciseEntity> exerciseEntityList = getExerciseToCreateList(createSessionsRequest);
         List<Session> sessionList = createSessionsRequest.getSessions();
-        for (Session session : sessionList) {
-            ApplicationUserEntity applicationUserEntity = applicationUserRespository.findById(session.getUsername())
-                    .orElseThrow(() -> new CustomException("404", "Not found", "User with ID " + session.getUsername() + " not found"));
-            SessionEntity sessionEntity = new SessionEntity(session.getSessionId(), session.getSessionName(), session.getSessionDate(), applicationUserEntity);
-            sessionRepository.save(sessionEntity);
-            List<TrainingVariable> trainingVariableList = session.getTrainingVariables();
-            saveSessionExercise(exerciseEntityList, sessionEntity, trainingVariableList);
-        }
+        saveSessions(sessionList, exerciseEntityList);
+        saveTrainingVolume(sessionList);
+        //sendTrainingSessionEmail(destinationEmail, sessionList);
         createSessions201Response.setMessage("Sessions successfully created.");
         return createSessions201Response;
     }
@@ -63,7 +66,19 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         }
     }
 
-    private void saveSessionExercise(List<ExerciseEntity> exerciseEntityList,
+    @Transactional
+    private void saveSessions(List<Session> sessionList, List<ExerciseEntity> exerciseEntityList) {
+        for (Session session : sessionList) {
+            ApplicationUserEntity applicationUserEntity = applicationUserRespository.findById(session.getUsername())
+                    .orElseThrow(() -> new CustomException("404", "Not found", "User with ID " + session.getUsername() + " not found"));
+            SessionEntity sessionEntity = new SessionEntity(session.getSessionId(), session.getSessionName(), session.getSessionDate(), applicationUserEntity);
+            sessionRepository.save(sessionEntity);
+            List<TrainingVariable> trainingVariableList = session.getTrainingVariables();
+            saveSessionExercises(exerciseEntityList, sessionEntity, trainingVariableList);
+        }
+    }
+
+    private void saveSessionExercises(List<ExerciseEntity> exerciseEntityList,
                                      SessionEntity sessionEntity,
                                      List<TrainingVariable> trainingVariableList) {
         for (ExerciseEntity exerciseEntity : exerciseEntityList) {
@@ -79,9 +94,39 @@ public class SessionManagementServiceImpl implements SessionManagementService {
                                        SessionExerciseEntity sessionExerciseEntity) {
         for (TrainingVariable trainingVariable : trainingVariableList) {
             TrainingVariablesEntity trainingVariablesEntity = new TrainingVariablesEntity(
-                    trainingVariable.getSetNumber(), sessionExerciseEntity, sessionExerciseEntity,
+                    trainingVariable.getSetNumber(), sessionExerciseEntity,
                     trainingVariable.getWeight(), trainingVariable.getRepetitions(), trainingVariable.getRir());
             trainingVariablesRepository.save(trainingVariablesEntity);
+        }
+    }
+
+    @Transactional
+    private void saveTrainingVolume(List<Session> sessionList) {
+        for (Session session : sessionList) {
+            List<SessionExerciseEntity> sessionExerciseEntityList = sessionExerciseRepository.findBySessionId(session.getSessionId());
+            for (SessionExerciseEntity sessionExerciseEntity : sessionExerciseEntityList) {
+                List<TrainingVariablesEntity> trainingVariablesEntityList =
+                        trainingVariablesRepository.findBySessionExercise(sessionExerciseEntity);
+                BigDecimal trainingVolume = new BigDecimal(0);
+                for (TrainingVariablesEntity trainingVariablesEntity : trainingVariablesEntityList) {
+                    trainingVolume = trainingVolume.add(trainingVariablesEntity.getWeight().
+                            multiply(new BigDecimal(trainingVariablesEntity.getRepetitions())));
+                }
+                sessionExerciseEntity.setTrainingVolume(trainingVolume);
+                sessionExerciseRepository.save(sessionExerciseEntity);
+            }
+        }
+    }
+
+    private void sendTrainingSessionEmail(String destinationEmail, List<Session> sessionList) {
+        String user = sessionList.get(0).getUsername();
+        for (Session session : sessionList) {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(senderEmail);
+            message.setTo(destinationEmail);
+            message.setSubject("Training Diary App");
+            message.setText("User " + user + " has registered a new training session on " + session.getSessionDate().toString());
+            emailSender.send(message);
         }
     }
 }

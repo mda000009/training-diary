@@ -15,12 +15,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class TrainingVariablesEntity implements Serializable {
 
-    public TrainingVariablesEntity(Integer setNumber, SessionExerciseEntity sessionExerciseBySessionEntity,
-                                   SessionExerciseEntity sessionExerciseByExerciseEntity, BigDecimal weight,
-                                   Integer repetitions, Integer rir) {
+    public TrainingVariablesEntity(Integer setNumber, SessionExerciseEntity sessionExercise,
+                                   BigDecimal weight, Integer repetitions, Integer rir) {
         this.setNumber = setNumber;
-        this.sessionExerciseBySessionEntity = sessionExerciseBySessionEntity;
-        this.sessionExerciseByExerciseEntity = sessionExerciseByExerciseEntity;
+        this.sessionExercise = sessionExercise;
         this.weight = weight;
         this.repetitions = repetitions;
         this.rir = rir;
@@ -37,12 +35,11 @@ public class TrainingVariablesEntity implements Serializable {
     private Integer setNumber;
 
     @ManyToOne
-    @JoinColumn(name = "SESSION_ID", referencedColumnName = "SESSION_ID", nullable = false)
-    private SessionExerciseEntity sessionExerciseBySessionEntity;
-
-    @ManyToOne
-    @JoinColumn(name = "EXERCISE_ID", referencedColumnName = "EXERCISE_ID", nullable = false)
-    private SessionExerciseEntity sessionExerciseByExerciseEntity;
+    @JoinColumns({
+            @JoinColumn(name = "SESSION_ID", referencedColumnName = "SESSION_ID"),
+            @JoinColumn(name = "EXERCISE_ID", referencedColumnName = "EXERCISE_ID")
+    })
+    private SessionExerciseEntity sessionExercise;
 
     @Column(name = "WEIGHT", nullable = false)
     private BigDecimal weight;
