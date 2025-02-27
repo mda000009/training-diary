@@ -76,6 +76,7 @@ public class SessionManagementServiceImplTest {
                 .thenReturn(Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
         when(applicationUserRepository.findById(user.getUsername())).thenReturn(Optional.of(applicationUserEntity));
         when(sessionRepository.save(any(SessionEntity.class))).thenReturn(sessionEntity);
+        when(sessionRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
         when(sessionExerciseRepository.save(any(SessionExerciseEntity.class))).thenReturn(sessionExerciseEntity);
         when(trainingVariablesRepository.save(any(TrainingVariablesEntity.class))).thenReturn(trainingVariablesEntity);
         when(sessionExerciseRepository.findBySessionId(1)).thenReturn(Collections.singletonList(sessionExerciseEntity));
@@ -86,7 +87,7 @@ public class SessionManagementServiceImplTest {
         verify(emailSender, times(1)).send(any(SimpleMailMessage.class));
 
         CreateSessions201Response expectedResponse = new CreateSessions201Response();
-        expectedResponse.setMessage("Sessions successfully created.");
+        expectedResponse.setSessions(Collections.singletonList(new ReturnSession(1, "Session successfully created")));
 
         assertEquals(expectedResponse, response);
     }

@@ -60,7 +60,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         boolean usernameFound = false;
         int i= 0;
         while (!usernameFound && i < applicationUserEntityList.size()) {
-            if (Objects.equals(user.getUsername(),applicationUserEntityList.get(i).getUsername())) {
+            if (Objects.equals(user.getUsername(), applicationUserEntityList.get(i).getUsername())) {
                 usernameFound = true;
             } else {
                 i++;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isia.tfm.entity.ExerciseEntity;
 import com.isia.tfm.model.CreateExercises201Response;
 import com.isia.tfm.model.CreateExercisesRequest;
+import com.isia.tfm.model.ReturnExercise;
 import com.isia.tfm.repository.ExerciseRepository;
 import com.isia.tfm.testutils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
+
+import java.util.Collections;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,11 +48,12 @@ public class ExerciseManagementServiceImplTest {
         when(objectMapper.convertValue(createExercisesRequest.getExercises().get(0), ExerciseEntity.class))
                 .thenReturn(exerciseEntity);
         when(exerciseRepository.save(any(ExerciseEntity.class))).thenReturn(exerciseEntity);
+        when(exerciseRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
 
         CreateExercises201Response response = exerciseManagementServiceImpl.createExercises(createExercisesRequest);
 
         CreateExercises201Response expectedResponse = new CreateExercises201Response();
-        expectedResponse.setMessage("Exercises successfully created.");
+        expectedResponse.setExercises(Collections.singletonList(new ReturnExercise(1, "Exercise successfully created")));
 
         assertEquals(expectedResponse, response);
     }
