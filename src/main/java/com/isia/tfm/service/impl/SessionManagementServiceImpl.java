@@ -82,7 +82,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         List<ReturnSession> returnSessionList = new ArrayList<>();
         for (Session session : sessionList) {
             ApplicationUserEntity applicationUserEntity = applicationUserRepository.findById(session.getUsername())
-                    .orElseThrow(() -> new CustomException("404", "Not found", "User with ID " + session.getUsername() + " not found"));
+                    .orElseThrow(() -> new CustomException("404", "Not found", "User with username " + session.getUsername() + " not found"));
             SessionEntity sessionEntity = new SessionEntity(session.getSessionId(), session.getSessionName(), session.getSessionDate(), applicationUserEntity);
             boolean createdSession = sessionRepository.findById(sessionEntity.getSessionId()).isPresent();
             if (!createdSession) {

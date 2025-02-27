@@ -104,4 +104,20 @@ public class SessionManagementServiceImplTest {
 
         assertEquals("The exercise with ID 1 is not created", e.getMessage());
     }
+
+    @Test
+    void createSessionsErrorUser() {
+        CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
+
+        when(exerciseRepository.findAllExerciseIds()).thenReturn(Collections.singletonList(1));
+        when(exerciseRepository.findAllById(any(List.class)))
+                .thenReturn(Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
+        when(applicationUserRepository.findById(createSessionsRequest.getSessions().get(0).getUsername())).thenReturn(Optional.empty());
+
+        CustomException e = assertThrows(CustomException.class, () -> {
+            sessionManagementServiceImpl.createSessions(createSessionsRequest);
+        });
+
+        assertEquals("User with username juanpereza not found", e.getMessage());
+    }
 }
