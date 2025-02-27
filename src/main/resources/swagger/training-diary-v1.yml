@@ -581,6 +581,7 @@ components:
         - birthday
         - gender
         - email
+      additionalProperties: false
 
     GetUser:
       type: object
@@ -653,6 +654,7 @@ components:
         - username
         - sessionId
         - sessionName
+      additionalProperties: false
 
     ReturnSession:
       type: object
@@ -698,6 +700,7 @@ components:
         - exerciseId
         - weight
         - repetitions
+      additionalProperties: false
 
     Exercise:
       type: object
@@ -713,6 +716,7 @@ components:
       required:
         - exerciseId
         - exerciseName
+      additionalProperties: false
 
     ReturnExercise:
       type: object

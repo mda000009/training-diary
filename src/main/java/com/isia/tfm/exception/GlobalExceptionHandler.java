@@ -1,5 +1,7 @@
 package com.isia.tfm.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -36,6 +38,13 @@ public class GlobalExceptionHandler {
             case "500" -> new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
             default -> new ResponseEntity<>(errorResponse, HttpStatus.SERVICE_UNAVAILABLE);
         };
+    }
+
+    @ExceptionHandler(UnrecognizedPropertyException.class)
+    public ResponseEntity<Error> handleInvalidAttributeName(UnrecognizedPropertyException ex) {
+        Error errorResponse = new Error("400", "Bad Request");
+        errorResponse.setMessage("Attribute name '" + ex.getPropertyName() + "' is incorrect.");
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
 }
