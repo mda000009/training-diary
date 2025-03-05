@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 @Slf4j
@@ -126,9 +127,10 @@ public class SessionManagementServiceImpl implements SessionManagementService {
     private void saveTrainingVariables(List<TrainingVariable> trainingVariableList,
                                        SessionExerciseEntity sessionExerciseEntity) {
         for (TrainingVariable trainingVariable : trainingVariableList) {
+            BigDecimal roundedWeight = trainingVariable.getWeight().setScale(3, RoundingMode.HALF_UP);
             TrainingVariablesEntity trainingVariablesEntity = new TrainingVariablesEntity(
                     trainingVariable.getSetNumber(), sessionExerciseEntity,
-                    trainingVariable.getWeight(), trainingVariable.getRepetitions(), trainingVariable.getRir());
+                    roundedWeight, trainingVariable.getRepetitions(), trainingVariable.getRir());
             trainingVariablesRepository.save(trainingVariablesEntity);
         }
     }
@@ -155,7 +157,8 @@ public class SessionManagementServiceImpl implements SessionManagementService {
                     trainingVolume = trainingVolume.add(trainingVariablesEntity.getWeight().
                             multiply(new BigDecimal(trainingVariablesEntity.getRepetitions())));
                 }
-                sessionExerciseEntity.setTrainingVolume(trainingVolume);
+                BigDecimal roundedTrainingVolume = trainingVolume.setScale(10, RoundingMode.HALF_UP);
+                sessionExerciseEntity.setTrainingVolume(roundedTrainingVolume);
                 sessionExerciseRepository.save(sessionExerciseEntity);
             }
         }
