@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,7 +33,7 @@ public class ExerciseManagementServiceImpl implements ExerciseManagementService 
                         return new ReturnExercise(exerciseEntity.getExerciseId(), "The exerciseId was already created");
                     }
                 })
-                .collect(Collectors.toList());
+                .toList();
         log.debug("Saved exercises");
         CreateExercises201Response createExercises201Response = new CreateExercises201Response();
         createExercises201Response.setExercises(returnExerciseList);
