@@ -9,8 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,21 +23,20 @@ public class ExerciseManagementServiceImpl implements ExerciseManagementService 
 
     @Override
     public CreateExercises201Response createExercises(CreateExercisesRequest createExercisesRequest) {
-        CreateExercises201Response createExercises201Response = new CreateExercises201Response();
-        List<ReturnExercise> returnExerciseList = new ArrayList<>();
-        for (Exercise exercise : createExercisesRequest.getExercises()) {
-            ExerciseEntity exerciseEntity = objectMapper.convertValue(exercise, ExerciseEntity.class);
-            boolean createdExercise = exerciseRepository.findById(exerciseEntity.getExerciseId()).isPresent();
-            if (!createdExercise) {
-                exerciseRepository.save(exerciseEntity);
-                ReturnExercise returnExercise = new ReturnExercise(exerciseEntity.getExerciseId(), "Exercise successfully created");
-                returnExerciseList.add(returnExercise);
-            } else {
-                ReturnExercise returnExercise = new ReturnExercise(exerciseEntity.getExerciseId(), "The exerciseId was already created");
-                returnExerciseList.add(returnExercise);
-            }
-        }
+        List<ReturnExercise> returnExerciseList = createExercisesRequest.getExercises().stream()
+                .map(exercise -> {
+                    ExerciseEntity exerciseEntity = objectMapper.convertValue(exercise, ExerciseEntity.class);
+                    boolean createdExercise = exerciseRepository.findById(exerciseEntity.getExerciseId()).isPresent();
+                    if (!createdExercise) {
+                        exerciseRepository.save(exerciseEntity);
+                        return new ReturnExercise(exerciseEntity.getExerciseId(), "Exercise successfully created");
+                    } else {
+                        return new ReturnExercise(exerciseEntity.getExerciseId(), "The exerciseId was already created");
+                    }
+                })
+                .collect(Collectors.toList());
         log.debug("Saved exercises");
+        CreateExercises201Response createExercises201Response = new CreateExercises201Response();
         createExercises201Response.setExercises(returnExerciseList);
         return createExercises201Response;
     }
