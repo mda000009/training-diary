@@ -39,11 +39,9 @@ public class SessionManagementServiceImpl implements SessionManagementService {
 
     @Override
     public CreateSessions201Response createSessions(CreateSessionsRequest createSessionsRequest) {
-        CreateSessions201Response createSessions201Response = new CreateSessions201Response();
         List<ExerciseEntity> exerciseEntityList = getExerciseToCreateList(createSessionsRequest);
-        List<Session> sessionList = createSessionsRequest.getSessions();
-        List<ReturnSession> returnSessionList = saveSessions(sessionList, exerciseEntityList);
-        List<Session> filteredSessionList = filterSessionsCreated(sessionList, returnSessionList);
+        List<ReturnSession> returnSessionList = saveSessions(createSessionsRequest.getSessions(), exerciseEntityList);
+        List<Session> filteredSessionList = filterSessionsCreated(createSessionsRequest.getSessions(), returnSessionList);
         log.debug("Saved training sessions");
         try {
             saveTrainingVolume(filteredSessionList);
@@ -57,6 +55,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         } catch (Exception e) {
             log.error("The information email could not be sent");
         }
+        CreateSessions201Response createSessions201Response = new CreateSessions201Response();
         createSessions201Response.setSessions(returnSessionList);
         return createSessions201Response;
     }
@@ -67,72 +66,69 @@ public class SessionManagementServiceImpl implements SessionManagementService {
                 .map(TrainingVariable::getExerciseId)
                 .toList();
         Set<Integer> createdExerciseSet = new HashSet<>(exerciseRepository.findAllExerciseIds());
-        String exerciseNotCreated = exerciseToCreateList.stream()
+        Optional<String> exerciseNotCreated = exerciseToCreateList.stream()
                 .filter(exercise -> !createdExerciseSet.contains(exercise))
                 .findFirst()
-                .map(String::valueOf)
-                .orElse(null);
-        if (exerciseNotCreated != null) {
-            throw new CustomException("404", "Not found", "The exercise with ID " + exerciseNotCreated + " is not created");
-        } else {
-            return exerciseRepository.findAllById(exerciseToCreateList);
-        }
+                .map(String::valueOf);
+        exerciseNotCreated.ifPresent(exerciseId -> {
+            throw new CustomException("404", "Not found", "The exercise with ID " + exerciseId + " is not created");
+        });
+        return exerciseRepository.findAllById(exerciseToCreateList);
     }
 
     @Transactional
     private List<ReturnSession> saveSessions(List<Session> sessionList, List<ExerciseEntity> exerciseEntityList) {
-        List<ReturnSession> returnSessionList = new ArrayList<>();
-        for (Session session : sessionList) {
-            ApplicationUserEntity applicationUserEntity = applicationUserRepository.findById(session.getUsername())
-                    .orElseThrow(() -> new CustomException("404", "Not found", "User with username " + session.getUsername() + " not found"));
-            SessionEntity sessionEntity = new SessionEntity(session.getSessionId(), session.getSessionName(), session.getSessionDate(), applicationUserEntity);
-            boolean createdSession = sessionRepository.findById(sessionEntity.getSessionId()).isPresent();
-            if (!createdSession) {
-                sessionRepository.save(sessionEntity);
-                List<TrainingVariable> trainingVariableList = session.getTrainingVariables();
-                saveSessionExercises(exerciseEntityList, sessionEntity, trainingVariableList);
-                ReturnSession returnSession = new ReturnSession(sessionEntity.getSessionId(), "Session successfully created");
-                returnSessionList.add(returnSession);
-            } else {
-                ReturnSession returnSession = new ReturnSession(sessionEntity.getSessionId(), "The sessionId was already created");
-                returnSessionList.add(returnSession);
-            }
-        }
-        return returnSessionList;
+        return sessionList.stream()
+                .map(session -> {
+                    ApplicationUserEntity applicationUserEntity = applicationUserRepository.findById(session.getUsername())
+                            .orElseThrow(() ->
+                                    new CustomException("404", "Not found", "User with username "
+                                            + session.getUsername() + " not found"));
+                    SessionEntity sessionEntity = new SessionEntity(session.getSessionId(), session.getSessionName(),
+                            session.getSessionDate(), applicationUserEntity);
+                    if (!sessionRepository.findById(sessionEntity.getSessionId()).isPresent()) {
+                        sessionRepository.save(sessionEntity);
+                        saveSessionExercises(exerciseEntityList, sessionEntity, session.getTrainingVariables());
+                        return new ReturnSession(sessionEntity.getSessionId(), "Session successfully created");
+                    } else {
+                        return new ReturnSession(sessionEntity.getSessionId(), "The sessionId was already created");
+                    }
+                })
+                .toList();
     }
 
     private void saveSessionExercises(List<ExerciseEntity> exerciseEntityList,
-                                     SessionEntity sessionEntity,
-                                     List<TrainingVariable> trainingVariableList) {
-        for (ExerciseEntity exerciseEntity : exerciseEntityList) {
-            SessionExerciseEntity sessionExerciseEntity = new SessionExerciseEntity(sessionEntity.getSessionId(),
-                    exerciseEntity.getExerciseId(), null, sessionEntity, exerciseEntity);
-            sessionExerciseRepository.save(sessionExerciseEntity);
-            List<TrainingVariable> filteredTrainingVariableList =
-                    filterTrainingVariablesByExerciseId(trainingVariableList, sessionExerciseEntity.getExerciseId());
-            saveTrainingVariables(filteredTrainingVariableList, sessionExerciseEntity);
-        }
+                                      SessionEntity sessionEntity,
+                                      List<TrainingVariable> trainingVariableList) {
+        exerciseEntityList.stream()
+                .map(exerciseEntity -> new SessionExerciseEntity(
+                        sessionEntity.getSessionId(), exerciseEntity.getExerciseId(), null,
+                        sessionEntity, exerciseEntity))
+                .forEach(sessionExerciseEntity -> {
+                    sessionExerciseRepository.save(sessionExerciseEntity);
+                    List<TrainingVariable> filteredTrainingVariableList =
+                            filterTrainingVariablesByExerciseId(trainingVariableList, sessionExerciseEntity.getExerciseId());
+                    saveTrainingVariables(filteredTrainingVariableList, sessionExerciseEntity);
+                });
     }
 
-    private List<TrainingVariable> filterTrainingVariablesByExerciseId(List<TrainingVariable> trainingVariableList, Integer exerciseId) {
-        List<TrainingVariable> filteredTrainingVariableList = new ArrayList<>();
-        for (TrainingVariable trainingVariable : trainingVariableList) {
-            if (Objects.equals(trainingVariable.getExerciseId(), exerciseId)) {
-                filteredTrainingVariableList.add(trainingVariable);
-            }
-        }
-        return filteredTrainingVariableList;
+    private List<TrainingVariable> filterTrainingVariablesByExerciseId(
+            List<TrainingVariable> trainingVariableList, Integer exerciseId) {
+        return trainingVariableList.stream()
+                .filter(trainingVariable -> Objects.equals(trainingVariable.getExerciseId(), exerciseId))
+                .toList();
     }
 
     private void saveTrainingVariables(List<TrainingVariable> trainingVariableList,
                                        SessionExerciseEntity sessionExerciseEntity) {
-        for (TrainingVariable trainingVariable : trainingVariableList) {
-            BigDecimal roundedWeight = trainingVariable.getWeight().setScale(3, RoundingMode.HALF_UP);
-            TrainingVariablesEntity trainingVariablesEntity = new TrainingVariablesEntity(
-                    trainingVariable.getSetNumber(), sessionExerciseEntity,
-                    roundedWeight, trainingVariable.getRepetitions(), trainingVariable.getRir());
-            trainingVariablesRepository.save(trainingVariablesEntity);
-        }
+        trainingVariableList.stream()
+                .map(trainingVariable -> new TrainingVariablesEntity(
+                        trainingVariable.getSetNumber(),
+                        sessionExerciseEntity,
+                        trainingVariable.getWeight().setScale(3, RoundingMode.HALF_UP),
+                        trainingVariable.getRepetitions(),
+                        trainingVariable.getRir()))
+                .forEach(trainingVariablesRepository::save);
     }
 
     private List<Session> filterSessionsCreated(List<Session> sessionList, List<ReturnSession> returnSessionList) {
@@ -147,33 +143,40 @@ public class SessionManagementServiceImpl implements SessionManagementService {
 
     @Transactional
     private void saveTrainingVolume(List<Session> sessionList) {
-        for (Session session : sessionList) {
-            List<SessionExerciseEntity> sessionExerciseEntityList = sessionExerciseRepository.findBySessionId(session.getSessionId());
-            for (SessionExerciseEntity sessionExerciseEntity : sessionExerciseEntityList) {
-                List<TrainingVariablesEntity> trainingVariablesEntityList =
-                        trainingVariablesRepository.findBySessionExercise(sessionExerciseEntity);
-                BigDecimal trainingVolume = new BigDecimal(0);
-                for (TrainingVariablesEntity trainingVariablesEntity : trainingVariablesEntityList) {
-                    trainingVolume = trainingVolume.add(trainingVariablesEntity.getWeight().
-                            multiply(new BigDecimal(trainingVariablesEntity.getRepetitions())));
-                }
-                BigDecimal roundedTrainingVolume = trainingVolume.setScale(10, RoundingMode.HALF_UP);
-                sessionExerciseEntity.setTrainingVolume(roundedTrainingVolume);
+        sessionList.forEach(session -> {
+            List<SessionExerciseEntity> sessionExerciseEntityList =
+                    sessionExerciseRepository.findBySessionId(session.getSessionId());
+            sessionExerciseEntityList.forEach(sessionExerciseEntity -> {
+                BigDecimal trainingVolume =
+                        calculateTrainingVolume(trainingVariablesRepository.findBySessionExercise(sessionExerciseEntity));
+                sessionExerciseEntity.setTrainingVolume(trainingVolume);
                 sessionExerciseRepository.save(sessionExerciseEntity);
-            }
-        }
+            });
+        });
+    }
+
+    private BigDecimal calculateTrainingVolume(List<TrainingVariablesEntity> trainingVariablesEntityList) {
+        return trainingVariablesEntityList.stream()
+                .map(trainingVariablesEntity -> trainingVariablesEntity.getWeight()
+                        .multiply(new BigDecimal(trainingVariablesEntity.getRepetitions())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(10, RoundingMode.HALF_UP);
     }
 
     private void sendTrainingSessionEmail(String destinationEmail, List<Session> sessionList) {
         String user = sessionList.get(0).getUsername();
-        for (Session session : sessionList) {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(senderEmail);
-            message.setTo(destinationEmail);
-            message.setSubject("Training Diary App");
-            message.setText("User " + user + " has registered a new training session on " + session.getSessionDate().toString());
-            emailSender.send(message);
-        }
+        sessionList.stream()
+                .map(session -> createEmailMessage(destinationEmail, user, session))
+                .forEach(emailSender::send);
+    }
+
+    private SimpleMailMessage createEmailMessage(String destinationEmail, String user, Session session) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(senderEmail);
+        message.setTo(destinationEmail);
+        message.setSubject("Training Diary App");
+        message.setText("User " + user + " has registered a new training session on " + session.getSessionDate().toString());
+        return message;
     }
 
 }
