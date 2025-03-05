@@ -32,10 +32,12 @@ public class UserManagementServiceImpl implements UserManagementService {
         CreateUser201Response createUser201Response = new CreateUser201Response();
         checkUsernameAndEmail(user);
         log.debug("Username and email checked");
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         ApplicationUserEntity applicationUserEntity = objectMapper.convertValue(user, ApplicationUserEntity.class);
         applicationUserEntity.setBirthDate(user.getBirthday());
         applicationUserEntity.setCreationDate(LocalDateTime.now());
+
         applicationUserEntity = applicationUserRepository.save(applicationUserEntity);
         if (applicationUserEntity.getUsername() != null) {
             log.debug("User successfully created");
@@ -48,39 +50,18 @@ public class UserManagementServiceImpl implements UserManagementService {
 
     private void checkUsernameAndEmail(User user) {
         List<ApplicationUserEntity> applicationUserEntityList = applicationUserRepository.findAll();
-        if (searchUsername(user, applicationUserEntityList)) {
+        boolean usernameExists = applicationUserEntityList.stream()
+                .anyMatch(entity -> Objects.equals(user.getUsername(), entity.getUsername()));
+        boolean emailExists = applicationUserEntityList.stream()
+                .anyMatch(entity -> Objects.equals(user.getEmail(), entity.getEmail()));
+
+        if (usernameExists) {
             log.error("The username is already in use");
             throw new CustomException("409", "Conflict", "The username is already in use");
-        } else if (searchEmail(user, applicationUserEntityList)) {
+        } else if (emailExists) {
             log.error("The email is already in use");
             throw new CustomException("409", "Conflict", "The email is already in use");
         }
-    }
-
-    private boolean searchUsername(User user, List<ApplicationUserEntity> applicationUserEntityList) {
-        boolean usernameFound = false;
-        int i= 0;
-        while (!usernameFound && i < applicationUserEntityList.size()) {
-            if (Objects.equals(user.getUsername(), applicationUserEntityList.get(i).getUsername())) {
-                usernameFound = true;
-            } else {
-                i++;
-            }
-        }
-        return usernameFound;
-    }
-
-    private boolean searchEmail(User user, List<ApplicationUserEntity> applicationUserEntityList) {
-        boolean emailFound = false;
-        int i= 0;
-        while (!emailFound && i < applicationUserEntityList.size()) {
-            if (Objects.equals(user.getEmail(),applicationUserEntityList.get(i).getEmail())) {
-                emailFound = true;
-            } else {
-                i++;
-            }
-        }
-        return emailFound;
     }
 
 }
