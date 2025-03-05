@@ -88,7 +88,7 @@ paths:
 
   /createSessions:
     post:
-      summary: Create a list of sessions
+      summary: Create a list of sessions, calculate the training volume and save it in the database and send an informative email
       description: This endpoint allows the creation of a list of sessions for a microcycle in the system.
       operationId: createSessions
       tags:
