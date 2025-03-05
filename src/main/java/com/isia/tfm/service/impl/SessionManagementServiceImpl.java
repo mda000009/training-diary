@@ -43,18 +43,21 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         List<ReturnSession> returnSessionList = saveSessions(createSessionsRequest.getSessions(), exerciseEntityList);
         List<Session> filteredSessionList = filterSessionsCreated(createSessionsRequest.getSessions(), returnSessionList);
         log.debug("Saved training sessions");
+
         try {
             saveTrainingVolume(filteredSessionList);
             log.debug("Training volume for each exercise of each session saved");
         } catch (Exception e) {
             log.error("Training volume could not be calculated and saved");
         }
+
         try {
             sendTrainingSessionEmail(createSessionsRequest.getDestinationEmail(), filteredSessionList);
             log.debug("An email successfully sent for each saved training session");
         } catch (Exception e) {
             log.error("The information email could not be sent");
         }
+
         CreateSessions201Response createSessions201Response = new CreateSessions201Response();
         createSessions201Response.setSessions(returnSessionList);
         return createSessions201Response;
@@ -70,6 +73,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
                 .filter(exercise -> !createdExerciseSet.contains(exercise))
                 .findFirst()
                 .map(String::valueOf);
+
         exerciseNotCreated.ifPresent(exerciseId -> {
             throw new CustomException("404", "Not found", "The exercise with ID " + exerciseId + " is not created");
         });
