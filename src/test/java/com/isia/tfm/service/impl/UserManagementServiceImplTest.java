@@ -31,6 +31,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserManagementServiceImplTest {
+
     @InjectMocks
     private UserManagementServiceImpl userManagementServiceImpl;
     @Mock
@@ -101,4 +102,5 @@ public class UserManagementServiceImplTest {
 
         assertEquals("The email is already in use", e.getMessage());
     }
+
 }

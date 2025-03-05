@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ExerciseManagementServiceImplTest {
+
     @InjectMocks
     private ExerciseManagementServiceImpl exerciseManagementServiceImpl;
     @Mock
@@ -57,4 +58,5 @@ public class ExerciseManagementServiceImplTest {
 
         assertEquals(expectedResponse, response);
     }
+
 }

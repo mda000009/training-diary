@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserManagementControllerTest {
+
     @InjectMocks
     private UserManagementController userManagementController;
     @Mock
@@ -51,4 +52,5 @@ public class UserManagementControllerTest {
 
         assertEquals(expectedResponse, response);
     }
+
 }

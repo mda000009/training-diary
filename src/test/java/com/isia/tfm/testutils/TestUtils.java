@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 public class TestUtils {
+
     public static <T extends Object> T readMockFile (String path, Class <T> type) {
         ObjectMapper objectMapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -19,4 +20,5 @@ public class TestUtils {
         }
         return null;
     }
+
 }

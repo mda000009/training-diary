@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SessionManagementControllerTest {
+
     @InjectMocks
     private SessionManagementController sessionManagementController;
     @Mock
@@ -51,4 +52,5 @@ public class SessionManagementControllerTest {
 
         assertEquals(expectedResponse, response);
     }
+
 }

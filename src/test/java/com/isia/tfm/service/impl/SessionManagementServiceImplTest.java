@@ -33,6 +33,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SessionManagementServiceImplTest {
+
     @InjectMocks
     private SessionManagementServiceImpl sessionManagementServiceImpl;
     @Mock
@@ -120,4 +121,5 @@ public class SessionManagementServiceImplTest {
 
         assertEquals("User with username juanpereza not found", e.getMessage());
     }
+
 }
