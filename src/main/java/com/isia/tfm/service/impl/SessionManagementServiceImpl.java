@@ -19,6 +19,7 @@ import java.util.*;
 @Slf4j
 @Service
 public class SessionManagementServiceImpl implements SessionManagementService {
+
     @Autowired
     private ExerciseRepository exerciseRepository;
     @Autowired
@@ -171,4 +172,5 @@ public class SessionManagementServiceImpl implements SessionManagementService {
             emailSender.send(message);
         }
     }
+
 }

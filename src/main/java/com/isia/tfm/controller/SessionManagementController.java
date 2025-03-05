@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping({"/training-diary/v1"})
 public class SessionManagementController implements SessionManagementApi {
+
     @Autowired
     private SessionManagementService sessionManagementService;
 
@@ -24,4 +25,5 @@ public class SessionManagementController implements SessionManagementApi {
         CreateSessions201Response response = sessionManagementService.createSessions(createSessionsRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
 }

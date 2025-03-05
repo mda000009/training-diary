@@ -15,6 +15,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class ExerciseManagementServiceImpl implements ExerciseManagementService {
+
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -40,4 +41,5 @@ public class ExerciseManagementServiceImpl implements ExerciseManagementService 
         createExercises201Response.setExercises(returnExerciseList);
         return createExercises201Response;
     }
+
 }

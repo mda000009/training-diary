@@ -19,6 +19,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class UserManagementServiceImpl implements UserManagementService {
+
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -81,4 +82,5 @@ public class UserManagementServiceImpl implements UserManagementService {
         }
         return emailFound;
     }
+
 }

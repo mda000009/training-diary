@@ -12,6 +12,7 @@ import java.util.List;
  */
 @Repository
 public interface SessionExerciseRepository extends JpaRepository<SessionExerciseEntity, SessionExercisePK> {
+
     /**
      * Retrieves session exercise entity list finding by session id.
      *
@@ -20,4 +21,5 @@ public interface SessionExerciseRepository extends JpaRepository<SessionExercise
      * @return {@link List<SessionExerciseEntity>}
      */
     List<SessionExerciseEntity> findBySessionId(Integer sessionId);
+
 }

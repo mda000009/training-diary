@@ -4,10 +4,12 @@ import com.isia.tfm.model.CreateExercises201Response;
 import com.isia.tfm.model.CreateExercisesRequest;
 
 public interface ExerciseManagementService {
+
     /**
      *
      * @param createExercisesRequest the create exercises request
      * @return {@link CreateExercises201Response}
      */
     CreateExercises201Response createExercises(CreateExercisesRequest createExercisesRequest);
+
 }
