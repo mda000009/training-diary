@@ -47,7 +47,6 @@ public class GlobalExceptionHandler {
         Error errorResponse = ex.getError();
         HttpStatus status = switch (errorResponse.getStatus()) {
             case "400" -> HttpStatus.BAD_REQUEST;
-            case "401" -> HttpStatus.UNAUTHORIZED;
             case "404" -> HttpStatus.NOT_FOUND;
             case "409" -> HttpStatus.CONFLICT;
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
