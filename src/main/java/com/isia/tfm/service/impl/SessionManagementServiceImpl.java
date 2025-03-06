@@ -20,12 +20,12 @@ import java.util.*;
 @Service
 public class SessionManagementServiceImpl implements SessionManagementService {
 
-    private final ExerciseRepository exerciseRepository;
-    private final ApplicationUserRepository applicationUserRepository;
-    private final SessionRepository sessionRepository;
-    private final SessionExerciseRepository sessionExerciseRepository;
-    private final TrainingVariablesRepository trainingVariablesRepository;
-    private final JavaMailSender emailSender;
+    ExerciseRepository exerciseRepository;
+    ApplicationUserRepository applicationUserRepository;
+    SessionRepository sessionRepository;
+    SessionExerciseRepository sessionExerciseRepository;
+    TrainingVariablesRepository trainingVariablesRepository;
+    JavaMailSender emailSender;
 
     public SessionManagementServiceImpl(ExerciseRepository exerciseRepository,
                                         ApplicationUserRepository applicationUserRepository,

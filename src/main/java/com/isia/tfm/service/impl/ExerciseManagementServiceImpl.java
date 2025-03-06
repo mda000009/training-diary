@@ -14,8 +14,8 @@ import java.util.List;
 @Service
 public class ExerciseManagementServiceImpl implements ExerciseManagementService {
 
-    private final ObjectMapper objectMapper;
-    private final ExerciseRepository exerciseRepository;
+    ObjectMapper objectMapper;
+    ExerciseRepository exerciseRepository;
 
     public ExerciseManagementServiceImpl(ObjectMapper objectMapper, ExerciseRepository exerciseRepository) {
         this.objectMapper = objectMapper;
