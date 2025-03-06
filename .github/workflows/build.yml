@@ -1,21 +1,14 @@
-name: Build
-
+name: SonarQube
 on:
   push:
     branches:
       - master
-      - develop
   pull_request:
-    branches:
-      - master
-      - develop
-
-
+    types: [opened, synchronize, reopened]
 jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,5 +33,4 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=mda000009_training-diary_adaa3f06-a6aa-4f52-b9eb-01b7f7034de9 -Dsonar.projectName='training-diary'
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=mda000009_training-diary
