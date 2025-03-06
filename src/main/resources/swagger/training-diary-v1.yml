@@ -46,9 +46,6 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-                    details:
-                      errorCode: "ERROR_002"
-                      description: "The email field has an incorrect format."
         '409':
           description: Conflict.
           content:
@@ -62,9 +59,6 @@ paths:
                     status: "409"
                     error: "Conflict"
                     message: "There are conflicts in some fields."
-                    details:
-                      errorCode: "ERROR_003"
-                      description: "The email already exists."
         '500':
           description: Internal Server Error.
           content:
@@ -78,9 +72,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -94,116 +85,10 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
 
-  /login:
-    post:
-      summary: Authenticate a user
-      description: This endpoint allows a user to authenticate in the system using their username and password.
-      operationId: login
-      tags:
-        - User management
-      requestBody:
-        description: User credentials for login.
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  description: Username for login.
-                  example: juanperez
-                password:
-                  type: string
-                  description: User password.
-                  example: mySecurePass123
-      responses:
-        '200':
-          description: OK.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Login successful.
-                  token:
-                    type: string
-                    description: JWT token for authentication in future requests.
-                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-        '400':
-          description: Bad Request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                badRequest:
-                  summary: Invalid request error
-                  value:
-                    status: "400"
-                    error: "Bad Request"
-                    message: "There are fields that do not comply with the specified format."
-                    details:
-                      errorCode: "ERROR_006"
-                      description: "The username field must be of type string."
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                unauthorized:
-                  summary: Unauthorized
-                  value:
-                    status: "401"
-                    error: "Unauthorized"
-                    message: "The username or password is incorrect."
-                    details:
-                      errorCode: "ERROR_007"
-                      description: "The username or password is incorrect."
-        '500':
-          description: Internal Server Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                internalServerError:
-                  summary: Internal Server Error
-                  value:
-                    status: "500"
-                    error: "Internal Server Error"
-                    message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
-        '503':
-          description: Service Unavailable.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                serviceUnavailable:
-                  summary: Service Unavailable
-                  value:
-                    status: "503"
-                    error: "Service Unavailable"
-                    message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
-                      
   /createSessions:
     post:
-      summary: Create a list of sessions
+      summary: Create a list of sessions, calculate the training volume and save it in the database and send an informative email
       description: This endpoint allows the creation of a list of sessions for a microcycle in the system.
       operationId: createSessions
       tags:
@@ -220,8 +105,13 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/Session'
-      security:
-        - BearerAuth: []
+                destinationEmail:
+                  type: string
+                  description: Personal trainer email.
+                  example: 0610809824@uma.es
+              required:
+                - sessions
+                - destinationEmail
       responses:
         '201':
           description: Created.
@@ -230,9 +120,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-                    example: Sessions successfully created.
+                  sessions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReturnSession'
         '400':
           description: Bad Request.
           content:
@@ -246,9 +137,6 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-                    details:
-                      errorCode: "ERROR_010"
-                      description: "The sessionDate field must have the format YYYY-MM-DD."
         '401':
           description: Unauthorized.
           content:
@@ -262,9 +150,6 @@ paths:
                     status: "401"
                     error: "Unauthorized"
                     message: "Unauthorized to perform the operation."
-                    details:
-                      errorCode: "ERROR_025"
-                      description: "Unauthorized to perform the operation."
         '409':
           description: Conflict.
           content:
@@ -278,9 +163,6 @@ paths:
                     status: "409"
                     error: "Conflict"
                     message: "There are conflicts with some fields."
-                    details:
-                      errorCode: "ERROR_011"
-                      description: "The sessionDate field must be between the start and end date of the microcycle."
         '500':
           description: Internal Server Error.
           content:
@@ -294,9 +176,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -310,9 +189,6 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
   /createExercises:
     post:
       summary: Create a list of exercises
@@ -332,8 +208,8 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/Exercise'
-      security:
-        - BearerAuth: []
+              required:
+                - exercises
       responses:
         '201':
           description: Created.
@@ -342,9 +218,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-                    example: Exercises successfully created.
+                  exercises:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReturnExercise'
         '400':
           description: Bad Request.
           content:
@@ -358,9 +235,6 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-                    details:
-                      errorCode: "ERROR_012"
-                      description: "The exerciseName field must be of type string."
         '401':
           description: Unauthorized.
           content:
@@ -374,9 +248,6 @@ paths:
                     status: "401"
                     error: "Unauthorized"
                     message: "Unauthorized to perform the operation."
-                    details:
-                      errorCode: "ERROR_025"
-                      description: "Unauthorized to perform the operation."
         '409':
           description: Conflict.
           content:
@@ -390,9 +261,6 @@ paths:
                     status: "409"
                     error: "Conflict"
                     message: "There are conflicts with some fields."
-                    details:
-                      errorCode: "ERROR_013"
-                      description: "The exerciseId already exists."
         '500':
           description: Internal Server Error.
           content:
@@ -406,9 +274,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -422,10 +287,7 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
-                      
+
   /getUser:
     get:
       summary: Get the user information
@@ -433,8 +295,6 @@ paths:
       operationId: getUser
       tags:
         - User management
-      security:
-        - BearerAuth: []
       responses:
         '200':
           description: User information successfully obtained.
@@ -455,9 +315,6 @@ paths:
                     status: "401"
                     error: "Unauthorized"
                     message: "Unauthorized to perform the operation."
-                    details:
-                      errorCode: "ERROR_025"
-                      description: "Unauthorized to perform the operation."
         '404':
           description: Not Found.
           content:
@@ -471,9 +328,6 @@ paths:
                     status: "404"
                     error: "Not Found"
                     message: "User not found."
-                    details:
-                      errorCode: "ERROR_024"
-                      description: "User not found."
         '500':
           description: Internal Server Error.
           content:
@@ -487,9 +341,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -503,10 +354,7 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
-                      
+
   /getSession/{sessionId}:
     get:
       summary: Get the session information
@@ -521,8 +369,6 @@ paths:
           required: true
           schema:
             type: integer
-      security:
-        - BearerAuth: []          
       responses:
         '200':
           description: Session information successfully obtained.
@@ -543,9 +389,6 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-                    details:
-                      errorCode: "ERROR_020"
-                      description: "The sessionId field must be of type int."
         '401':
           description: Unauthorized.
           content:
@@ -559,9 +402,6 @@ paths:
                     status: "401"
                     error: "Unauthorized"
                     message: "Unauthorized to perform the operation."
-                    details:
-                      errorCode: "ERROR_025"
-                      description: "Unauthorized to perform the operation."
         '404':
           description: Not Found.
           content:
@@ -575,9 +415,6 @@ paths:
                     status: "404"
                     error: "Not Found"
                     message: "Field sessionId not found."
-                    details:
-                      errorCode: "ERROR_021"
-                      description: "Field sessionId not found."
         '500':
           description: Internal Server Error.
           content:
@@ -591,9 +428,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -607,10 +441,7 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
-                      
+
   /getExercise/{exerciseId}:
     get:
       summary: Get the exercise information
@@ -625,8 +456,6 @@ paths:
           required: true
           schema:
             type: integer
-      security:
-        - BearerAuth: []          
       responses:
         '200':
           description: Exercise information successfully obtained.
@@ -647,9 +476,6 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-                    details:
-                      errorCode: "ERROR_022"
-                      description: "The exerciseId field must be of type int."
         '401':
           description: Unauthorized.
           content:
@@ -663,9 +489,6 @@ paths:
                     status: "401"
                     error: "Unauthorized"
                     message: "Unauthorized to perform the operation."
-                    details:
-                      errorCode: "ERROR_025"
-                      description: "Unauthorized to perform the operation."
         '404':
           description: Not Found.
           content:
@@ -679,9 +502,6 @@ paths:
                     status: "404"
                     error: "Not Found"
                     message: "Field exerciseId not found."
-                    details:
-                      errorCode: "ERROR_023"
-                      description: "Field exerciseId not found."
         '500':
           description: Internal Server Error.
           content:
@@ -695,9 +515,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-                    details:
-                      errorCode: "ERROR_004"
-                      description: "Database connection error."
         '503':
           description: Service Unavailable.
           content:
@@ -711,17 +528,8 @@ paths:
                     status: "503"
                     error: "Service Unavailable"
                     message: "Service Unavailable."
-                    details:
-                      errorCode: "ERROR_005"
-                      description: "Server temporarily out of service."
-                  
+
 components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      
   schemas:
     User:
       type: object
@@ -773,7 +581,8 @@ components:
         - birthday
         - gender
         - email
-        
+      additionalProperties: false
+
     GetUser:
       type: object
       properties:
@@ -820,10 +629,10 @@ components:
     Session:
       type: object
       properties:
-        applicationUserId:
-          type: integer
-          description: ID of the user to whom the session belongs.
-          example: 1
+        username:
+          type: string
+          description: Unique username.
+          example: juanperez
         sessionId:
           type: integer
           description: Unique ID of the session.
@@ -842,9 +651,25 @@ components:
           items:
             $ref: '#/components/schemas/TrainingVariable'
       required:
-        - applicationUserId
+        - username
         - sessionId
         - sessionName
+      additionalProperties: false
+
+    ReturnSession:
+      type: object
+      properties:
+        sessionId:
+          type: integer
+          description: Unique ID of the session.
+          example: 1
+        status:
+          type: string
+          description: Session status.
+          example: "Session successfully created"
+      required:
+        - sessionId
+        - status
 
     TrainingVariable:
       type: object
@@ -870,13 +695,12 @@ components:
           type: integer
           description: Repetitions in reserve (RIR).
           example: 1
-        restTime:
-          type: integer
-          description: Rest time between sets (in seconds).
-          example: 120
       required:
         - setNumber
         - exerciseId
+        - weight
+        - repetitions
+      additionalProperties: false
 
     Exercise:
       type: object
@@ -892,7 +716,23 @@ components:
       required:
         - exerciseId
         - exerciseName
-        
+      additionalProperties: false
+
+    ReturnExercise:
+      type: object
+      properties:
+        exerciseId:
+          type: integer
+          description: Unique ID of the exercise.
+          example: 1
+        status:
+          type: string
+          description: Exercise status.
+          example: "Exercise successfully created"
+      required:
+        - exerciseId
+        - status
+
     GetExercise:
       type: object
       properties:
@@ -900,14 +740,14 @@ components:
           type: string
           description: Name of the exercise.
           example: "Bench Press"
-            
+
     GetSession:
       type: object
       properties:
-        applicationUserId:
-          type: integer
-          description: ID of the user to whom the session belongs.
-          example: 1
+        username:
+          type: string
+          description: Unique username.
+          example: juanperez
         sessionName:
           type: string
           example: "Sesion 1"
@@ -919,7 +759,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TrainingVariable'
-            
+
     Error:
       type: object
       properties:
@@ -935,17 +775,6 @@ components:
           type: string
           description: Detailed error message.
           example: "Mandatory fields are missing or the data is invalid"
-        details:
-          type: object
-          properties:
-            errorCode:
-              type: string
-              description: Internal error code.
-              example: "ERROR_001"
-            description:
-              type: string
-              description: More detailed description of the error.
-              example: "The start date of the microcycle cannot be earlier than the start date of the mesocycle"
       required:
         - status
         - error
