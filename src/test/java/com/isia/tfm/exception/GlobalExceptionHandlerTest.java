@@ -22,18 +22,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @AutoConfigureObservability
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 
     @InjectMocks
     private GlobalExceptionHandler globalExceptionHandler;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testHandleValidationException() {
+    void testHandleValidationException() {
         BindingResult bindingResult = new BeanPropertyBindingResult(null, "objectName");
         MethodArgumentNotValidException ex = new MethodArgumentNotValidException(null, bindingResult);
         ResponseEntity<Error> response = globalExceptionHandler.handleValidationException(ex);
@@ -42,7 +42,7 @@ public class GlobalExceptionHandlerTest {
     }
 
     @Test
-    public void testHandleConstraintViolationException() {
+    void testHandleConstraintViolationException() {
         ConstraintViolationException ex = new ConstraintViolationException(null);
         ResponseEntity<Error> response = globalExceptionHandler.handleConstraintViolationException(ex);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -50,7 +50,7 @@ public class GlobalExceptionHandlerTest {
     }
 
     @Test
-    public void testHandleCustomException() {
+    void testHandleCustomException() {
         CustomException ex = new CustomException("409", "Conflict", "The username is already in use");
         ResponseEntity<Error> response = globalExceptionHandler.handleCustomException(ex);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
@@ -58,7 +58,7 @@ public class GlobalExceptionHandlerTest {
     }
 
     @Test
-    public void testHandleInvalidAttributeName() {
+    void testHandleInvalidAttributeName() {
         UnrecognizedPropertyException ex = new UnrecognizedPropertyException(null, null, null, null, "invalidProperty", null);
         ResponseEntity<Error> response = globalExceptionHandler.handleInvalidAttributeName(ex);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

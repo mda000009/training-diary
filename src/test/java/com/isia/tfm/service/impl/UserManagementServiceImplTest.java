@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 @AutoConfigureObservability
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UserManagementServiceImplTest {
+class UserManagementServiceImplTest {
 
     @InjectMocks
     private UserManagementServiceImpl userManagementServiceImpl;
@@ -42,7 +42,7 @@ public class UserManagementServiceImplTest {
     private ApplicationUserRepository applicationUserRepository;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
