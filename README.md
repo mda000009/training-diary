@@ -47,9 +47,9 @@ training-diary/
 └── pom.xml
 
 ## Prerequisites
-Install JDK 17
-Configure the system environment variables DB_PASSWORD and MAIL_PASSWORD. To know their values, please contact us via the email provided in the "Contact" section.
+- Install JDK 17
+- Configure the system environment variables DB_PASSWORD and MAIL_PASSWORD. To know their values, please contact us via the email provided in the "Contact" section.
 
 ## Other Considerations
-Although there are only three endpoints, three controllers have been created because the idea is to continue expanding the project and create the rest of the operations (GET, PUT, and DELETE) in each controller.
-Security has not been added to the API (JWT Token, OAuth 2.0...) because the project is purely educational and is not intended to be deployed on any remote server at the moment.
+- Although there are only three endpoints, three controllers have been created because the idea is to continue expanding the project and create the rest of the operations (GET, PUT, and DELETE) in each controller.
+- Security has not been added to the API (JWT Token, OAuth 2.0...) because the project is purely educational and is not intended to be deployed on any remote server at the moment.
