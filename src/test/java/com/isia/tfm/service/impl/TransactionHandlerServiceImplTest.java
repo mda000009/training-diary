@@ -108,12 +108,14 @@ class TransactionHandlerServiceImplTest {
 
         when(applicationUserRepository.findById(createSessionsRequest.getSessions().get(0).getUsername())).thenReturn(Optional.empty());
 
-        CustomException e = assertThrows(CustomException.class, () -> {
-            transactionHandlerServiceImpl.saveSessions(
-                    createSessionsRequest.getSessions(), Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
-        });
+        CustomException e = assertThrows(CustomException.class, () -> callSaveSessions(createSessionsRequest));
 
         assertEquals("User with username juanpereza not found", e.getMessage());
+    }
+
+    private void callSaveSessions(CreateSessionsRequest createSessionsRequest) {
+        transactionHandlerServiceImpl.saveSessions(
+                createSessionsRequest.getSessions(), Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
     }
 
 }
