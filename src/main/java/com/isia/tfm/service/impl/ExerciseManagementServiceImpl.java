@@ -6,7 +6,6 @@ import com.isia.tfm.model.*;
 import com.isia.tfm.repository.ExerciseRepository;
 import com.isia.tfm.service.ExerciseManagementService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,10 +14,13 @@ import java.util.List;
 @Service
 public class ExerciseManagementServiceImpl implements ExerciseManagementService {
 
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private ExerciseRepository exerciseRepository;
+    private final ObjectMapper objectMapper;
+    private final ExerciseRepository exerciseRepository;
+
+    public ExerciseManagementServiceImpl(ObjectMapper objectMapper, ExerciseRepository exerciseRepository) {
+        this.objectMapper = objectMapper;
+        this.exerciseRepository = exerciseRepository;
+    }
 
     @Override
     public CreateExercises201Response createExercises(CreateExercisesRequest createExercisesRequest) {

@@ -8,7 +8,6 @@ import com.isia.tfm.model.User;
 import com.isia.tfm.repository.ApplicationUserRepository;
 import com.isia.tfm.service.UserManagementService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +19,17 @@ import java.util.Objects;
 @Service
 public class UserManagementServiceImpl implements UserManagementService {
 
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private ApplicationUserRepository applicationUserRepository;
+    private final ObjectMapper objectMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final ApplicationUserRepository applicationUserRepository;
+
+    public UserManagementServiceImpl(ObjectMapper objectMapper,
+                                     PasswordEncoder passwordEncoder,
+                                     ApplicationUserRepository applicationUserRepository) {
+        this.objectMapper = objectMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.applicationUserRepository = applicationUserRepository;
+    }
 
     @Override
     public CreateUser201Response createUser(User user) {
