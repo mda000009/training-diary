@@ -15,39 +15,8 @@ To contribute to the project, please contact us via the email provided in the "C
 ## Contact
 0610809824@uma.es
 
-## Project Structure
-training-diary/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/
-│   │   │       └── isia/
-│   │   │           └── tfm/
-│   │   │               ├── config
-│   │   │               ├── controller
-│   │   │               ├── entity
-│   │   │               ├── exception
-│   │   │               ├── repository
-│   │   │               └── service/
-│   │   │                   └── impl
-│   │   ├── resources/
-│   │   │   ├── config
-│   │   │   └── swagger
-│   └── test/
-│       ├── java/
-│       │   └── com/
-│       │       └── isia/
-│       │           └── tfm/
-│       │               ├── controller
-│       │               ├── exception
-│       │               ├── service.impl
-│       │               └── testutils
-│       └── resources/
-│           └── mocks
-└── pom.xml
-
 ## Prerequisites
-- Install JDK 17
+- Install JDK 17.
 - Configure the system environment variables DB_PASSWORD and MAIL_PASSWORD. To know their values, please contact us via the email provided in the "Contact" section.
 
 ## Other Considerations
