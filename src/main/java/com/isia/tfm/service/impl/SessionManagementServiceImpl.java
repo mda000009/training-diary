@@ -6,7 +6,6 @@ import com.isia.tfm.model.*;
 import com.isia.tfm.repository.*;
 import com.isia.tfm.service.SessionManagementService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,18 +20,26 @@ import java.util.*;
 @Service
 public class SessionManagementServiceImpl implements SessionManagementService {
 
-    @Autowired
-    private ExerciseRepository exerciseRepository;
-    @Autowired
-    private ApplicationUserRepository applicationUserRepository;
-    @Autowired
-    private SessionRepository sessionRepository;
-    @Autowired
-    private SessionExerciseRepository sessionExerciseRepository;
-    @Autowired
-    private TrainingVariablesRepository trainingVariablesRepository;
-    @Autowired
-    private JavaMailSender emailSender;
+    private final ExerciseRepository exerciseRepository;
+    private final ApplicationUserRepository applicationUserRepository;
+    private final SessionRepository sessionRepository;
+    private final SessionExerciseRepository sessionExerciseRepository;
+    private final TrainingVariablesRepository trainingVariablesRepository;
+    private final JavaMailSender emailSender;
+
+    public SessionManagementServiceImpl(ExerciseRepository exerciseRepository,
+                                        ApplicationUserRepository applicationUserRepository,
+                                        SessionRepository sessionRepository,
+                                        SessionExerciseRepository sessionExerciseRepository,
+                                        TrainingVariablesRepository trainingVariablesRepository,
+                                        JavaMailSender emailSender) {
+        this.exerciseRepository = exerciseRepository;
+        this.applicationUserRepository = applicationUserRepository;
+        this.sessionRepository = sessionRepository;
+        this.sessionExerciseRepository = sessionExerciseRepository;
+        this.trainingVariablesRepository = trainingVariablesRepository;
+        this.emailSender = emailSender;
+    }
 
     @Value("${spring.mail.username}")
     private String senderEmail;
@@ -81,7 +88,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
     }
 
     @Transactional
-    private List<ReturnSession> saveSessions(List<Session> sessionList, List<ExerciseEntity> exerciseEntityList) {
+    public List<ReturnSession> saveSessions(List<Session> sessionList, List<ExerciseEntity> exerciseEntityList) {
         return sessionList.stream()
                 .map(session -> {
                     ApplicationUserEntity applicationUserEntity = applicationUserRepository.findById(session.getUsername())
@@ -146,7 +153,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
     }
 
     @Transactional
-    private void saveTrainingVolume(List<Session> sessionList) {
+    public void saveTrainingVolume(List<Session> sessionList) {
         sessionList.forEach(session -> {
             List<SessionExerciseEntity> sessionExerciseEntityList =
                     sessionExerciseRepository.findBySessionId(session.getSessionId());

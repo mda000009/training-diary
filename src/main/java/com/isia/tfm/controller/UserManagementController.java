@@ -4,7 +4,6 @@ import com.isia.tfm.api.UserManagementApi;
 import com.isia.tfm.model.CreateUser201Response;
 import com.isia.tfm.model.User;
 import com.isia.tfm.service.UserManagementService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping({"/training-diary/v1"})
 public class UserManagementController implements UserManagementApi {
 
-    @Autowired
-    private UserManagementService userManagementService;
+    private final UserManagementService userManagementService;
+
+    public UserManagementController(UserManagementService userManagementService) {
+        this.userManagementService = userManagementService;
+    }
 
     @Override
     public ResponseEntity<CreateUser201Response> createUser(User user) {
