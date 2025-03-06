@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping({"/training-diary/v1"})
 public class ExerciseManagementController implements ExerciseManagementApi {
 
-    private final ExerciseManagementService exerciseManagementService;
+    ExerciseManagementService exerciseManagementService;
 
     public ExerciseManagementController(ExerciseManagementService exerciseManagementService) {
         this.exerciseManagementService = exerciseManagementService;

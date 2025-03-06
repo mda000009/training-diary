@@ -19,9 +19,9 @@ import java.util.Objects;
 @Service
 public class UserManagementServiceImpl implements UserManagementService {
 
-    private final ObjectMapper objectMapper;
-    private final PasswordEncoder passwordEncoder;
-    private final ApplicationUserRepository applicationUserRepository;
+    ObjectMapper objectMapper;
+    PasswordEncoder passwordEncoder;
+    ApplicationUserRepository applicationUserRepository;
 
     public UserManagementServiceImpl(ObjectMapper objectMapper,
                                      PasswordEncoder passwordEncoder,

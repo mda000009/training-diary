@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping({"/training-diary/v1"})
 public class SessionManagementController implements SessionManagementApi {
 
-    private final SessionManagementService sessionManagementService;
+    SessionManagementService sessionManagementService;
 
     public SessionManagementController(SessionManagementService sessionManagementService) {
         this.sessionManagementService = sessionManagementService;

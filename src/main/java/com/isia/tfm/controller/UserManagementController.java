@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping({"/training-diary/v1"})
 public class UserManagementController implements UserManagementApi {
 
-    private final UserManagementService userManagementService;
+    UserManagementService userManagementService;
 
     public UserManagementController(UserManagementService userManagementService) {
         this.userManagementService = userManagementService;
