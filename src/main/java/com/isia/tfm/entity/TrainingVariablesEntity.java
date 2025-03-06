@@ -37,10 +37,8 @@ public class TrainingVariablesEntity implements Serializable {
     private Integer setNumber;
 
     @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "SESSION_ID", referencedColumnName = "SESSION_ID"),
-            @JoinColumn(name = "EXERCISE_ID", referencedColumnName = "EXERCISE_ID")
-    })
+    @JoinColumn(name = "SESSION_ID", referencedColumnName = "SESSION_ID")
+    @JoinColumn(name = "EXERCISE_ID", referencedColumnName = "EXERCISE_ID")
     private SessionExerciseEntity sessionExercise;
 
     @Column(name = "WEIGHT", nullable = false)

@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 @AutoConfigureObservability
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ExerciseManagementControllerTest {
+class ExerciseManagementControllerTest {
 
     @InjectMocks
     private ExerciseManagementController exerciseManagementController;
@@ -34,7 +34,7 @@ public class ExerciseManagementControllerTest {
     private ExerciseManagementService exerciseManagementService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 

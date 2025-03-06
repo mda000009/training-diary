@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @AutoConfigureObservability
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class TransactionHandlerServiceImplTest {
+class TransactionHandlerServiceImplTest {
 
     @InjectMocks
     private TransactionHandlerServiceImpl transactionHandlerServiceImpl;
@@ -43,7 +43,7 @@ public class TransactionHandlerServiceImplTest {
     private TrainingVariablesRepository trainingVariablesRepository;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 

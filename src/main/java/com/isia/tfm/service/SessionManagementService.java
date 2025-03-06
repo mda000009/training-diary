@@ -3,6 +3,9 @@ package com.isia.tfm.service;
 import com.isia.tfm.model.CreateSessions201Response;
 import com.isia.tfm.model.CreateSessionsRequest;
 
+/**
+ * Service interface for managing sessions.
+ */
 public interface SessionManagementService {
 
     /**

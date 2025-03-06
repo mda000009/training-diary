@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 @AutoConfigureObservability
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SessionManagementServiceImplTest {
+class SessionManagementServiceImplTest {
 
     @InjectMocks
     private SessionManagementServiceImpl sessionManagementServiceImpl;
@@ -45,7 +45,7 @@ public class SessionManagementServiceImplTest {
     private String senderEmail;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 

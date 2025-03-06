@@ -8,12 +8,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Entity
 @Table(name = "EXERCISES")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExerciseEntity {
+public class ExerciseEntity implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "EXERCISE_ID", nullable = false)

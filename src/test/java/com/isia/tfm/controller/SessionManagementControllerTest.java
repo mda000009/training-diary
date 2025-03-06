@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 @AutoConfigureObservability
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SessionManagementControllerTest {
+class SessionManagementControllerTest {
 
     @InjectMocks
     private SessionManagementController sessionManagementController;
@@ -34,7 +34,7 @@ public class SessionManagementControllerTest {
     private SessionManagementService sessionManagementService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 

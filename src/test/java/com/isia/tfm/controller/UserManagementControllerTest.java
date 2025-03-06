@@ -1,10 +1,7 @@
 package com.isia.tfm.controller;
 
-import com.isia.tfm.model.CreateSessions201Response;
-import com.isia.tfm.model.CreateSessionsRequest;
 import com.isia.tfm.model.CreateUser201Response;
 import com.isia.tfm.model.User;
-import com.isia.tfm.service.SessionManagementService;
 import com.isia.tfm.service.UserManagementService;
 import com.isia.tfm.testutils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +23,7 @@ import static org.mockito.Mockito.when;
 @AutoConfigureObservability
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UserManagementControllerTest {
+class UserManagementControllerTest {
 
     @InjectMocks
     private UserManagementController userManagementController;
@@ -34,7 +31,7 @@ public class UserManagementControllerTest {
     private UserManagementService userManagementService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 

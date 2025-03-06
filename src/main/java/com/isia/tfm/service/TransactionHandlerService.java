@@ -6,6 +6,10 @@ import com.isia.tfm.model.Session;
 
 import java.util.List;
 
+/**
+ * Service interface for handling transactions.
+ * This interface acts as a proxy to call transactional methods from non-transactional methods in other services.
+ */
 public interface TransactionHandlerService {
 
     /**

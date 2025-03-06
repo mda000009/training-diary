@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class CustomException extends RuntimeException {
 
-    private Error error;
+    private final transient Error error;
 
     public CustomException(String status, String error, String message) {
         super(message);

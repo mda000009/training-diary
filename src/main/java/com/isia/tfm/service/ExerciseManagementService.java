@@ -3,6 +3,9 @@ package com.isia.tfm.service;
 import com.isia.tfm.model.CreateExercises201Response;
 import com.isia.tfm.model.CreateExercisesRequest;
 
+/**
+ * Service interface for managing exercises.
+ */
 public interface ExerciseManagementService {
 
     /**
