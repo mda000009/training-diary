@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping({"/training-diary/v1"})
 public class ExerciseManagementController implements ExerciseManagementApi {
+
     @Autowired
     private ExerciseManagementService exerciseManagementService;
 
@@ -24,4 +25,5 @@ public class ExerciseManagementController implements ExerciseManagementApi {
         CreateExercises201Response response = exerciseManagementService.createExercises(createExercisesRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
 }

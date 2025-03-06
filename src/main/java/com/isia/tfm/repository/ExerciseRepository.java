@@ -12,6 +12,7 @@ import java.util.List;
  */
 @Repository
 public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Integer> {
+
     /**
      * Retrieves all the primary keys (exerciseId) of all {@link ExerciseEntity}.
      *
@@ -19,4 +20,5 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, Intege
      */
     @Query("SELECT e.exerciseId FROM ExerciseEntity e")
     List<Integer> findAllExerciseIds();
+
 }

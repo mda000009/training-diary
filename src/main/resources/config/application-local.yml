@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:oracle:thin:@localhost:1521:xe
     username: MANUEL
-    password: fuDeli93
+    password: ${DB_PASSWORD}
     driver-class-name: oracle.jdbc.OracleDriver
     platform: oracle
     hikari:
@@ -21,7 +21,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: masterisiatfm@gmail.com
-    password: tjK4rW%ag
+    password: ${MAIL_PASSWORD}
     protocol: smtp
     tls: true
     properties:
@@ -30,3 +30,6 @@ spring:
           auth: true
           starttls:
             enable: true
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true

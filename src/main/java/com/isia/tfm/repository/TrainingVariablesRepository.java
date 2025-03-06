@@ -12,6 +12,7 @@ import java.util.List;
  */
 @Repository
 public interface TrainingVariablesRepository extends JpaRepository<TrainingVariablesEntity, Integer> {
+
     /**
      * Retrieves the training variables list for a session and an exercise.
      *
@@ -20,4 +21,5 @@ public interface TrainingVariablesRepository extends JpaRepository<TrainingVaria
      * @return {@link List<TrainingVariablesEntity>}
      */
     List<TrainingVariablesEntity> findBySessionExercise(SessionExerciseEntity sessionExerciseEntity);
+
 }

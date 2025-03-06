@@ -33,6 +33,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SessionManagementServiceImplTest {
+
     @InjectMocks
     private SessionManagementServiceImpl sessionManagementServiceImpl;
     @Mock
@@ -76,6 +77,7 @@ public class SessionManagementServiceImplTest {
                 .thenReturn(Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
         when(applicationUserRepository.findById(user.getUsername())).thenReturn(Optional.of(applicationUserEntity));
         when(sessionRepository.save(any(SessionEntity.class))).thenReturn(sessionEntity);
+        when(sessionRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
         when(sessionExerciseRepository.save(any(SessionExerciseEntity.class))).thenReturn(sessionExerciseEntity);
         when(trainingVariablesRepository.save(any(TrainingVariablesEntity.class))).thenReturn(trainingVariablesEntity);
         when(sessionExerciseRepository.findBySessionId(1)).thenReturn(Collections.singletonList(sessionExerciseEntity));
@@ -86,7 +88,7 @@ public class SessionManagementServiceImplTest {
         verify(emailSender, times(1)).send(any(SimpleMailMessage.class));
 
         CreateSessions201Response expectedResponse = new CreateSessions201Response();
-        expectedResponse.setMessage("Sessions successfully created.");
+        expectedResponse.setSessions(Collections.singletonList(new ReturnSession(1, "Session successfully created")));
 
         assertEquals(expectedResponse, response);
     }
@@ -103,4 +105,21 @@ public class SessionManagementServiceImplTest {
 
         assertEquals("The exercise with ID 1 is not created", e.getMessage());
     }
+
+    @Test
+    void createSessionsErrorUser() {
+        CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
+
+        when(exerciseRepository.findAllExerciseIds()).thenReturn(Collections.singletonList(1));
+        when(exerciseRepository.findAllById(any(List.class)))
+                .thenReturn(Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
+        when(applicationUserRepository.findById(createSessionsRequest.getSessions().get(0).getUsername())).thenReturn(Optional.empty());
+
+        CustomException e = assertThrows(CustomException.class, () -> {
+            sessionManagementServiceImpl.createSessions(createSessionsRequest);
+        });
+
+        assertEquals("User with username juanpereza not found", e.getMessage());
+    }
+
 }

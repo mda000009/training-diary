@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping({"/training-diary/v1"})
 public class UserManagementController implements UserManagementApi {
+
     @Autowired
     private UserManagementService userManagementService;
 
@@ -24,4 +25,5 @@ public class UserManagementController implements UserManagementApi {
         CreateUser201Response response = userManagementService.createUser(user);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
 }

@@ -88,7 +88,7 @@ paths:
 
   /createSessions:
     post:
-      summary: Create a list of sessions
+      summary: Create a list of sessions, calculate the training volume and save it in the database and send an informative email
       description: This endpoint allows the creation of a list of sessions for a microcycle in the system.
       operationId: createSessions
       tags:
@@ -120,9 +120,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-                    example: Sessions successfully created.
+                  sessions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReturnSession'
         '400':
           description: Bad Request.
           content:
@@ -217,9 +218,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-                    example: Exercises successfully created.
+                  exercises:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReturnExercise'
         '400':
           description: Bad Request.
           content:
@@ -579,6 +581,7 @@ components:
         - birthday
         - gender
         - email
+      additionalProperties: false
 
     GetUser:
       type: object
@@ -651,6 +654,22 @@ components:
         - username
         - sessionId
         - sessionName
+      additionalProperties: false
+
+    ReturnSession:
+      type: object
+      properties:
+        sessionId:
+          type: integer
+          description: Unique ID of the session.
+          example: 1
+        status:
+          type: string
+          description: Session status.
+          example: "Session successfully created"
+      required:
+        - sessionId
+        - status
 
     TrainingVariable:
       type: object
@@ -681,6 +700,7 @@ components:
         - exerciseId
         - weight
         - repetitions
+      additionalProperties: false
 
     Exercise:
       type: object
@@ -696,6 +716,22 @@ components:
       required:
         - exerciseId
         - exerciseName
+      additionalProperties: false
+
+    ReturnExercise:
+      type: object
+      properties:
+        exerciseId:
+          type: integer
+          description: Unique ID of the exercise.
+          example: 1
+        status:
+          type: string
+          description: Exercise status.
+          example: "Exercise successfully created"
+      required:
+        - exerciseId
+        - status
 
     GetExercise:
       type: object

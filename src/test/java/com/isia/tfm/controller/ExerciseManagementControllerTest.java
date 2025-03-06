@@ -2,6 +2,7 @@ package com.isia.tfm.controller;
 
 import com.isia.tfm.model.CreateExercises201Response;
 import com.isia.tfm.model.CreateExercisesRequest;
+import com.isia.tfm.model.ReturnExercise;
 import com.isia.tfm.service.ExerciseManagementService;
 import com.isia.tfm.testutils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,8 @@ import org.springframework.boot.test.autoconfigure.actuate.observability.AutoCon
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -24,6 +27,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ExerciseManagementControllerTest {
+
     @InjectMocks
     private ExerciseManagementController exerciseManagementController;
     @Mock
@@ -38,7 +42,7 @@ public class ExerciseManagementControllerTest {
     void createExercises() {
         CreateExercisesRequest createExercisesRequest = TestUtils.readMockFile("exercises", CreateExercisesRequest.class);
         CreateExercises201Response createExercises201Response = new CreateExercises201Response();
-        createExercises201Response.setMessage("Exercises successfully created.");
+        createExercises201Response.setExercises(Collections.singletonList(new ReturnExercise(1, "Exercise successfully created")));
 
         when(exerciseManagementService.createExercises(any(CreateExercisesRequest.class))).thenReturn(createExercises201Response);
 
@@ -48,4 +52,5 @@ public class ExerciseManagementControllerTest {
 
         assertEquals(expectedResponse, response);
     }
+
 }
