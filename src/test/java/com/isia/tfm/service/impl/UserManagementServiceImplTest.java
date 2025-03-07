@@ -50,7 +50,7 @@ class UserManagementServiceImplTest {
     void createUser() {
         User user = TestUtils.readMockFile("user", User.class);
         ApplicationUserEntity applicationUserEntity = new ApplicationUserEntity(user.getUsername(), user.getFirstName(),
-                user.getLastName(), user.getPassword(), user.getBirthday(), "Male", user.getEmail(),
+                user.getLastName(), user.getPassword(), user.getBirthdate(), "Male", user.getEmail(),
                 user.getPhoneNumber(), LocalDateTime.now());
 
         when(passwordEncoder.encode(anyString())).thenReturn("example");
@@ -72,7 +72,7 @@ class UserManagementServiceImplTest {
         User user = TestUtils.readMockFile("user", User.class);
         List<ApplicationUserEntity> applicationUserEntityList = new ArrayList<>();
         ApplicationUserEntity applicationUserEntity = new ApplicationUserEntity(user.getUsername(), user.getFirstName(),
-                user.getLastName(), user.getPassword(), user.getBirthday(), "Male", "junit@example.com",
+                user.getLastName(), user.getPassword(), user.getBirthdate(), "Male", "junit@example.com",
                 user.getPhoneNumber(), LocalDateTime.now());
         applicationUserEntityList.add(applicationUserEntity);
 
@@ -90,7 +90,7 @@ class UserManagementServiceImplTest {
         User user = TestUtils.readMockFile("user", User.class);
         List<ApplicationUserEntity> applicationUserEntityList = new ArrayList<>();
         ApplicationUserEntity applicationUserEntity = new ApplicationUserEntity("example", user.getFirstName(),
-                user.getLastName(), user.getPassword(), user.getBirthday(), "Male", user.getEmail(),
+                user.getLastName(), user.getPassword(), user.getBirthdate(), "Male", user.getEmail(),
                 user.getPhoneNumber(), LocalDateTime.now());
         applicationUserEntityList.add(applicationUserEntity);
 
