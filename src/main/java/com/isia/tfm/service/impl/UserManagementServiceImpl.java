@@ -39,7 +39,6 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         ApplicationUserEntity applicationUserEntity = objectMapper.convertValue(user, ApplicationUserEntity.class);
-        applicationUserEntity.setBirthDate(user.getBirthday());
         applicationUserEntity.setCreationDate(LocalDateTime.now());
 
         applicationUserEntity = applicationUserRepository.save(applicationUserEntity);

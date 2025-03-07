@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Training Diary API
-  description: API for logging gym workouts.
+  description: API for recording gym workouts.
   version: 1.0.0
   contact:
     name: API Support
@@ -46,6 +46,19 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
+        '404':
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                badRequest:
+                  summary: Not found
+                  value:
+                    status: "404"
+                    error: "Not found"
+                    message: "Resource not found."
         '409':
           description: Conflict.
           content:
@@ -72,19 +85,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-        '503':
-          description: Service Unavailable.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                serviceUnavailable:
-                  summary: Service Unavailable
-                  value:
-                    status: "503"
-                    error: "Service Unavailable"
-                    message: "Service Unavailable."
 
   /createSessions:
     post:
@@ -137,32 +137,19 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                unauthorized:
-                  summary: Unauthorized
-                  value:
-                    status: "401"
-                    error: "Unauthorized"
-                    message: "Unauthorized to perform the operation."
-        '409':
-          description: Conflict.
+        '404':
+          description: Not found.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               examples:
                 badRequest:
-                  summary: Conflict
+                  summary: Not found
                   value:
-                    status: "409"
-                    error: "Conflict"
-                    message: "There are conflicts with some fields."
+                    status: "404"
+                    error: "Not found"
+                    message: "Resource not found."
         '500':
           description: Internal Server Error.
           content:
@@ -176,19 +163,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-        '503':
-          description: Service Unavailable.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                serviceUnavailable:
-                  summary: Service Unavailable
-                  value:
-                    status: "503"
-                    error: "Service Unavailable"
-                    message: "Service Unavailable."
   /createExercises:
     post:
       summary: Create a list of exercises
@@ -235,99 +209,19 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                unauthorized:
-                  summary: Unauthorized
-                  value:
-                    status: "401"
-                    error: "Unauthorized"
-                    message: "Unauthorized to perform the operation."
-        '409':
-          description: Conflict.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                badRequest:
-                  summary: Conflict
-                  value:
-                    status: "409"
-                    error: "Conflict"
-                    message: "There are conflicts with some fields."
-        '500':
-          description: Internal Server Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                internalServerError:
-                  summary: Internal Server Error
-                  value:
-                    status: "500"
-                    error: "Internal Server Error"
-                    message: "Internal Server Error."
-        '503':
-          description: Service Unavailable.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                serviceUnavailable:
-                  summary: Service Unavailable
-                  value:
-                    status: "503"
-                    error: "Service Unavailable"
-                    message: "Service Unavailable."
-
-  /getUser:
-    get:
-      summary: Get the user information
-      description: This endpoint allows to get the user information
-      operationId: getUser
-      tags:
-        - User management
-      responses:
-        '200':
-          description: User information successfully obtained.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetUser'
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                unauthorized:
-                  summary: Unauthorized
-                  value:
-                    status: "401"
-                    error: "Unauthorized"
-                    message: "Unauthorized to perform the operation."
         '404':
-          description: Not Found.
+          description: Not found.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               examples:
                 badRequest:
-                  summary: User not found
+                  summary: Not found
                   value:
                     status: "404"
-                    error: "Not Found"
-                    message: "User not found."
+                    error: "Not found"
+                    message: "Resource not found."
         '500':
           description: Internal Server Error.
           content:
@@ -341,193 +235,6 @@ paths:
                     status: "500"
                     error: "Internal Server Error"
                     message: "Internal Server Error."
-        '503':
-          description: Service Unavailable.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                serviceUnavailable:
-                  summary: Service Unavailable
-                  value:
-                    status: "503"
-                    error: "Service Unavailable"
-                    message: "Service Unavailable."
-
-  /getSession/{sessionId}:
-    get:
-      summary: Get the session information
-      description: This endpoint allows to get the session information
-      operationId: getSession
-      tags:
-        - Session management
-      parameters:
-        - name: sessionId
-          in: path
-          description: Unique ID of the session.
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Session information successfully obtained.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetSession'
-        '400':
-          description: Bad Request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                badRequest:
-                  summary: Invalid request error
-                  value:
-                    status: "400"
-                    error: "Bad Request"
-                    message: "There are fields that do not comply with the specified format."
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                unauthorized:
-                  summary: Unauthorized
-                  value:
-                    status: "401"
-                    error: "Unauthorized"
-                    message: "Unauthorized to perform the operation."
-        '404':
-          description: Not Found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                badRequest:
-                  summary: Field sessionId not found
-                  value:
-                    status: "404"
-                    error: "Not Found"
-                    message: "Field sessionId not found."
-        '500':
-          description: Internal Server Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                internalServerError:
-                  summary: Internal Server Error
-                  value:
-                    status: "500"
-                    error: "Internal Server Error"
-                    message: "Internal Server Error."
-        '503':
-          description: Service Unavailable.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                serviceUnavailable:
-                  summary: Service Unavailable
-                  value:
-                    status: "503"
-                    error: "Service Unavailable"
-                    message: "Service Unavailable."
-
-  /getExercise/{exerciseId}:
-    get:
-      summary: Get the exercise information
-      description: This endpoint allows to get the exercise information
-      operationId: getExercise
-      tags:
-        - Exercise management
-      parameters:
-        - name: exerciseId
-          in: path
-          description: Unique ID of the exercise.
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Exercise information successfully obtained.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetExercise'
-        '400':
-          description: Bad Request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                badRequest:
-                  summary: Invalid request error
-                  value:
-                    status: "400"
-                    error: "Bad Request"
-                    message: "There are fields that do not comply with the specified format."
-        '401':
-          description: Unauthorized.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                unauthorized:
-                  summary: Unauthorized
-                  value:
-                    status: "401"
-                    error: "Unauthorized"
-                    message: "Unauthorized to perform the operation."
-        '404':
-          description: Not Found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                badRequest:
-                  summary: Field exerciseId not found
-                  value:
-                    status: "404"
-                    error: "Not Found"
-                    message: "Field exerciseId not found."
-        '500':
-          description: Internal Server Error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                internalServerError:
-                  summary: Internal Server Error
-                  value:
-                    status: "500"
-                    error: "Internal Server Error"
-                    message: "Internal Server Error."
-        '503':
-          description: Service Unavailable.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                serviceUnavailable:
-                  summary: Service Unavailable
-                  value:
-                    status: "503"
-                    error: "Service Unavailable"
-                    message: "Service Unavailable."
 
 components:
   schemas:
@@ -550,7 +257,7 @@ components:
           type: string
           description: User's password.
           example: mySecurePass123
-        birthday:
+        birthdate:
           type: string
           format: date
           description: User's birth date.
@@ -578,53 +285,10 @@ components:
         - lastName
         - username
         - password
-        - birthday
+        - birthdate
         - gender
         - email
       additionalProperties: false
-
-    GetUser:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: User's first name.
-          example: Juan
-        lastName:
-          type: string
-          description: User's last name.
-          example: Pérez
-        username:
-          type: string
-          description: Unique username.
-          example: juanperez
-        birthday:
-          type: string
-          format: date
-          description: User's birth date.
-          example: '1990-05-25'
-          pattern: "^\\d{4}-\\d{2}-\\d{2}$"
-        gender:
-          type: string
-          enum:
-            - Male
-            - Female
-            - Another
-          description: User's gender.
-          example: Male
-        email:
-          type: string
-          format: email
-          description: User's email address.
-          example: juan.perez@example.com
-        phoneNumber:
-          type: string
-          description: User's phone number.
-          example: '1234567890'
-        creationDate:
-          type: string
-          format: date
-          example: "2024-06-25"
 
     Session:
       type: object
@@ -732,33 +396,6 @@ components:
       required:
         - exerciseId
         - status
-
-    GetExercise:
-      type: object
-      properties:
-        exerciseName:
-          type: string
-          description: Name of the exercise.
-          example: "Bench Press"
-
-    GetSession:
-      type: object
-      properties:
-        username:
-          type: string
-          description: Unique username.
-          example: juanperez
-        sessionName:
-          type: string
-          example: "Sesion 1"
-        sessionDate:
-          type: string
-          format: date
-          example: "2024-06-25"
-        training_variables:
-          type: array
-          items:
-            $ref: '#/components/schemas/TrainingVariable'
 
     Error:
       type: object
