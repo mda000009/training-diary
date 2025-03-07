@@ -3,7 +3,7 @@
   "lastName": "Pérez",
   "username": "juanpereza",
   "password": "mySecurePass123",
-  "birthday": "1990-05-25",
+  "birthdate": "1990-05-25",
   "gender": "Male",
   "email": "juan.perez@example.com",
   "phoneNumber": "1234567890"

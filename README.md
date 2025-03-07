@@ -9,7 +9,7 @@ To run the project locally, the prerequisites detailed in the "Prerequisites" se
 - Linux or macOS: ./mvnw spring-boot:run
 
 ## Usage
-Once the project is running locally, you can send requests to any API endpoint. You can use the [Postman collections](https://1drv.ms/u/c/34367cf4eb5bef5e/EWBYQERNwRhDiNYc09xWITcBi9rNLayX3sfv-nQWGY1irA?e=Qr9pMI). You can also make requests to the endpoints via [Swagger Editor](https://editor.swagger.io/) using the file "training-diary/src/main/resources/swagger/training-diary-v1.yml".  
+Once the project is running locally, you can send requests to any API endpoint. You can use the [Postman collections](https://1drv.ms/u/c/34367cf4eb5bef5e/EfwgzReUGi1BmE3_wEyZLWYB1aPBtKYOhJcJ4aJ-9gC1TQ?e=EARg8k). You can also make requests to the endpoints via [Swagger Editor](https://editor.swagger.io/) using the file "training-diary/src/main/resources/swagger/training-diary-v1.yml".  
 
 ## Contribution
 To contribute to the project, please contact us via the email provided in the "Contact" section.  

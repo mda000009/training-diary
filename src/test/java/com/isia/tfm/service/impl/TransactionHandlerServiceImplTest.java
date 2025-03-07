@@ -51,7 +51,7 @@ class TransactionHandlerServiceImplTest {
     void saveSessions() {
         User user = TestUtils.readMockFile("user", User.class);
         ApplicationUserEntity applicationUserEntity = new ApplicationUserEntity(user.getUsername(), user.getFirstName(),
-                user.getLastName(), user.getPassword(), user.getBirthday(), "Male", user.getEmail(),
+                user.getLastName(), user.getPassword(), user.getBirthdate(), "Male", user.getEmail(),
                 user.getPhoneNumber(), LocalDateTime.now());
         CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
         SessionEntity sessionEntity = new SessionEntity(1, "Session 1", LocalDate.now(), applicationUserEntity);
@@ -80,7 +80,7 @@ class TransactionHandlerServiceImplTest {
     void saveTrainingVolume() {
         User user = TestUtils.readMockFile("user", User.class);
         ApplicationUserEntity applicationUserEntity = new ApplicationUserEntity(user.getUsername(), user.getFirstName(),
-                user.getLastName(), user.getPassword(), user.getBirthday(), "Male", user.getEmail(),
+                user.getLastName(), user.getPassword(), user.getBirthdate(), "Male", user.getEmail(),
                 user.getPhoneNumber(), LocalDateTime.now());
         CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
         SessionEntity sessionEntity = new SessionEntity(1, "Session 1", LocalDate.now(), applicationUserEntity);

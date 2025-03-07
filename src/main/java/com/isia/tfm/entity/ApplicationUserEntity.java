@@ -37,7 +37,7 @@ public class ApplicationUserEntity implements Serializable {
     private String password;
 
     @Column(name = "BIRTHDATE", nullable = false)
-    private LocalDate birthDate;
+    private LocalDate birthdate;
 
     @Column(name = "GENDER", nullable = false)
     private String gender;

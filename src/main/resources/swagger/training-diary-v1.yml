@@ -46,6 +46,19 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
+        '404':
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                badRequest:
+                  summary: Not found
+                  value:
+                    status: "404"
+                    error: "Not found"
+                    message: "Resource not found."
         '409':
           description: Conflict.
           content:
@@ -136,7 +149,7 @@ paths:
                   value:
                     status: "404"
                     error: "Not found"
-                    message: "The exercise with ID 1 is not created."
+                    message: "Resource not found."
         '500':
           description: Internal Server Error.
           content:
@@ -196,6 +209,19 @@ paths:
                     status: "400"
                     error: "Bad Request"
                     message: "There are fields that do not comply with the specified format."
+        '404':
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                badRequest:
+                  summary: Not found
+                  value:
+                    status: "404"
+                    error: "Not found"
+                    message: "Resource not found."
         '500':
           description: Internal Server Error.
           content:
@@ -231,7 +257,7 @@ components:
           type: string
           description: User's password.
           example: mySecurePass123
-        birthday:
+        birthdate:
           type: string
           format: date
           description: User's birth date.
@@ -259,7 +285,7 @@ components:
         - lastName
         - username
         - password
-        - birthday
+        - birthdate
         - gender
         - email
       additionalProperties: false
