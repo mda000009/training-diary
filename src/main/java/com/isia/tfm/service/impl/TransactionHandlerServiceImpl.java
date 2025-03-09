@@ -7,6 +7,7 @@ import com.isia.tfm.model.Session;
 import com.isia.tfm.model.TrainingVariable;
 import com.isia.tfm.repository.*;
 import com.isia.tfm.service.TransactionHandlerService;
+import com.isia.tfm.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -67,16 +67,9 @@ public class TransactionHandlerServiceImpl implements TransactionHandlerService 
                 .forEach(sessionExerciseEntity -> {
                     sessionExerciseRepository.save(sessionExerciseEntity);
                     List<TrainingVariable> filteredTrainingVariableList =
-                            filterTrainingVariablesByExerciseId(trainingVariableList, sessionExerciseEntity.getExerciseId());
+                            Utils.filterTrainingVariablesByExerciseId(trainingVariableList, sessionExerciseEntity.getExerciseId());
                     saveTrainingVariables(filteredTrainingVariableList, sessionExerciseEntity);
                 });
-    }
-
-    private List<TrainingVariable> filterTrainingVariablesByExerciseId(
-            List<TrainingVariable> trainingVariableList, Integer exerciseId) {
-        return trainingVariableList.stream()
-                .filter(trainingVariable -> Objects.equals(trainingVariable.getExerciseId(), exerciseId))
-                .toList();
     }
 
     private void saveTrainingVariables(List<TrainingVariable> trainingVariableList,

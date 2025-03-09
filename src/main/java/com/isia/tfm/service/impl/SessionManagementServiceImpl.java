@@ -6,12 +6,19 @@ import com.isia.tfm.model.*;
 import com.isia.tfm.repository.*;
 import com.isia.tfm.service.SessionManagementService;
 import com.isia.tfm.service.TransactionHandlerService;
+import com.isia.tfm.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 @Slf4j
@@ -53,6 +60,13 @@ public class SessionManagementServiceImpl implements SessionManagementService {
             log.debug("An email successfully sent for each saved training session");
         } catch (Exception e) {
             log.error("The information email could not be sent");
+        }
+
+        try {
+            createExcelFile(filteredSessionList, exerciseEntityList);
+            log.debug("An excel successfully saved for each saved training session");
+        } catch (Exception e) {
+            log.error("The excel not be saved");
         }
 
         CreateSessions201Response createSessions201Response = new CreateSessions201Response();
@@ -101,6 +115,49 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         message.setSubject("Training Diary App");
         message.setText("User " + user + " has registered a new training session on " + session.getSessionDate().toString());
         return message;
+    }
+
+    private void createExcelFile(List<Session> createdSessionList, List<ExerciseEntity> exerciseEntityList)
+            throws IOException {
+        for (Session session: createdSessionList) {
+            // Crear un libro de trabajo
+            Workbook workbook = new XSSFWorkbook();
+            // Crear una hoja en el libro de trabajo
+            Sheet sheet = workbook.createSheet("Session Data");
+
+            // Crear la primera fila (encabezados)
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("EXERCISE_ID");
+            headerRow.createCell(1).setCellValue("EXERCISE_NAME");
+            headerRow.createCell(2).setCellValue("SET_NUMBER");
+            headerRow.createCell(3).setCellValue("REPETITIONS");
+            headerRow.createCell(4).setCellValue("WEIGHT");
+            headerRow.createCell(5).setCellValue("RIR");
+
+            // Llenar el archivo con datos
+            int rowNum = 1;
+            for (ExerciseEntity exerciseEntity : exerciseEntityList) {
+                List<TrainingVariable> filteredTrainingVariableList = Utils.filterTrainingVariablesByExerciseId(
+                        session.getTrainingVariables(), exerciseEntity.getExerciseId());
+                for (TrainingVariable trainingVariable : filteredTrainingVariableList) {
+                    Row row = sheet.createRow(rowNum++);
+                    row.createCell(0).setCellValue(exerciseEntity.getExerciseId().toString());
+                    row.createCell(1).setCellValue(exerciseEntity.getExerciseName());
+                    row.createCell(2).setCellValue(trainingVariable.getSetNumber().toString());
+                    row.createCell(3).setCellValue(trainingVariable.getRepetitions().toString());
+                    row.createCell(4).setCellValue(trainingVariable.getWeight().toString());
+                    row.createCell(5).setCellValue(trainingVariable.getRir().toString());
+                }
+            }
+
+            String fileName = "SESSION_ID_" + session.getSessionId().toString() + "_DATA.xlsx";
+            String filePath = "C:\\Users\\manue\\OneDrive\\Escritorio\\TFM\\Excel_examples\\" + fileName;
+            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+                workbook.write(fileOut);
+            } finally {
+                workbook.close();
+            }
+        }
     }
 
 }
