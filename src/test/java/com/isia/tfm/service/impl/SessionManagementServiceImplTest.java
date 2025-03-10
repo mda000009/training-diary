@@ -6,6 +6,7 @@ import com.isia.tfm.model.*;
 import com.isia.tfm.repository.*;
 import com.isia.tfm.service.TransactionHandlerService;
 import com.isia.tfm.testutils.TestUtils;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.actuate.observability.AutoCon
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,6 +55,13 @@ class SessionManagementServiceImplTest {
     void createSessions() {
         CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
 
+        sessionManagementServiceImpl = spy(sessionManagementServiceImpl);
+        try {
+            doNothing().when(sessionManagementServiceImpl).saveWorkbookToFile(any(Workbook.class), anyInt());
+            // doNothing().when(sessionManagementServiceImpl).createExcelFile(anyList(), anyList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         when(exerciseRepository.findAllExerciseIds()).thenReturn(Collections.singletonList(1));
         when(exerciseRepository.findAllById(any(List.class)))
                 .thenReturn(Collections.singletonList(new ExerciseEntity(1, "Bench Press")));

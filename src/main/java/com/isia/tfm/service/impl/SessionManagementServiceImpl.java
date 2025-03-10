@@ -117,46 +117,48 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         return message;
     }
 
-    private void createExcelFile(List<Session> createdSessionList, List<ExerciseEntity> exerciseEntityList)
-            throws IOException {
-        for (Session session: createdSessionList) {
-            // Crear un libro de trabajo
-            Workbook workbook = new XSSFWorkbook();
-            // Crear una hoja en el libro de trabajo
-            Sheet sheet = workbook.createSheet("Session Data");
-
-            // Crear la primera fila (encabezados)
-            Row headerRow = sheet.createRow(0);
-            headerRow.createCell(0).setCellValue("EXERCISE_ID");
-            headerRow.createCell(1).setCellValue("EXERCISE_NAME");
-            headerRow.createCell(2).setCellValue("SET_NUMBER");
-            headerRow.createCell(3).setCellValue("REPETITIONS");
-            headerRow.createCell(4).setCellValue("WEIGHT");
-            headerRow.createCell(5).setCellValue("RIR");
-
-            // Llenar el archivo con datos
-            int rowNum = 1;
-            for (ExerciseEntity exerciseEntity : exerciseEntityList) {
-                List<TrainingVariable> filteredTrainingVariableList = Utils.filterTrainingVariablesByExerciseId(
-                        session.getTrainingVariables(), exerciseEntity.getExerciseId());
-                for (TrainingVariable trainingVariable : filteredTrainingVariableList) {
-                    Row row = sheet.createRow(rowNum++);
-                    row.createCell(0).setCellValue(exerciseEntity.getExerciseId().toString());
-                    row.createCell(1).setCellValue(exerciseEntity.getExerciseName());
-                    row.createCell(2).setCellValue(trainingVariable.getSetNumber().toString());
-                    row.createCell(3).setCellValue(trainingVariable.getRepetitions().toString());
-                    row.createCell(4).setCellValue(trainingVariable.getWeight().toString());
-                    row.createCell(5).setCellValue(trainingVariable.getRir().toString());
-                }
+    private void createExcelFile(List<Session> createdSessionList, List<ExerciseEntity> exerciseEntityList) throws IOException {
+        for (Session session : createdSessionList) {
+            try (Workbook workbook = new XSSFWorkbook()) {
+                Sheet sheet = createSheetWithHeader(workbook);
+                fillSheetWithData(sheet, session, exerciseEntityList);
+                saveWorkbookToFile(workbook, session.getSessionId());
             }
+        }
+    }
 
-            String fileName = "SESSION_ID_" + session.getSessionId().toString() + "_DATA.xlsx";
-            String filePath = "C:\\Users\\manue\\OneDrive\\Escritorio\\TFM\\Excel_examples\\" + fileName;
-            try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
-                workbook.write(fileOut);
-            } finally {
-                workbook.close();
+    private Sheet createSheetWithHeader(Workbook workbook) {
+        Sheet sheet = workbook.createSheet("Session Data");
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {"EXERCISE_ID", "EXERCISE_NAME", "SET_NUMBER", "REPETITIONS", "WEIGHT", "RIR"};
+        for (int i = 0; i < headers.length; i++) {
+            headerRow.createCell(i).setCellValue(headers[i]);
+        }
+        return sheet;
+    }
+
+    private void fillSheetWithData(Sheet sheet, Session session, List<ExerciseEntity> exerciseEntityList) {
+        int rowNum = 1;
+        for (ExerciseEntity exerciseEntity : exerciseEntityList) {
+            List<TrainingVariable> filteredTrainingVariableList =
+                    Utils.filterTrainingVariablesByExerciseId(session.getTrainingVariables(), exerciseEntity.getExerciseId());
+            for (TrainingVariable trainingVariable : filteredTrainingVariableList) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(exerciseEntity.getExerciseId().toString());
+                row.createCell(1).setCellValue(exerciseEntity.getExerciseName());
+                row.createCell(2).setCellValue(trainingVariable.getSetNumber().toString());
+                row.createCell(3).setCellValue(trainingVariable.getRepetitions().toString());
+                row.createCell(4).setCellValue(trainingVariable.getWeight().toString());
+                row.createCell(5).setCellValue(trainingVariable.getRir().toString());
             }
+        }
+    }
+
+    protected void saveWorkbookToFile(Workbook workbook, Integer sessionId) throws IOException {
+        String fileName = "SESSION_ID_" + sessionId + "_DATA.xlsx";
+        String filePath = "C:\\Users\\manue\\OneDrive\\Escritorio\\TFM\\Excel_examples\\" + fileName;
+        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+            workbook.write(fileOut);
         }
     }
 
