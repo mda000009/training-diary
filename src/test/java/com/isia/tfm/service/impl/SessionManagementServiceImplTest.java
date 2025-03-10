@@ -54,10 +54,12 @@ class SessionManagementServiceImplTest {
     @Test
     void createSessions() {
         CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
+        String destinationEmail = "0610809824@uma.es";
+        String excelFilePath = "C:\\Users\\mda00009\\Desktop\\Excel_Files\\";
 
         sessionManagementServiceImpl = spy(sessionManagementServiceImpl);
         try {
-            doNothing().when(sessionManagementServiceImpl).saveWorkbookToFile(any(Workbook.class), anyInt());
+            doNothing().when(sessionManagementServiceImpl).saveWorkbookToFile(any(Workbook.class), anyInt(), anyString());
             // doNothing().when(sessionManagementServiceImpl).createExcelFile(anyList(), anyList());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -68,13 +70,17 @@ class SessionManagementServiceImplTest {
         when(transactionHandlerService.saveSessions(anyList(), anyList()))
                 .thenReturn(Collections.singletonList(new ReturnSession(1, "Session successfully created")));
 
-        CreateSessions201Response response = sessionManagementServiceImpl.createSessions(createSessionsRequest);
+        CreateSessions201Response response = sessionManagementServiceImpl.createSessions(Boolean.TRUE, Boolean.TRUE,
+                Boolean.TRUE, createSessionsRequest, destinationEmail, excelFilePath);
 
         verify(transactionHandlerService, times(1)).saveTrainingVolume(anyList());
         verify(emailSender, times(1)).send(any(SimpleMailMessage.class));
 
         CreateSessions201Response expectedResponse = new CreateSessions201Response();
         expectedResponse.setSessions(Collections.singletonList(new ReturnSession(1, "Session successfully created")));
+        expectedResponse.setSavedTrainingVolumeSuccessfully("true");
+        expectedResponse.setSentEmailSuccessfully("true");
+        expectedResponse.setSavedExcelSuccessfully("true");
 
         assertEquals(expectedResponse, response);
     }
@@ -82,11 +88,14 @@ class SessionManagementServiceImplTest {
     @Test
     void createSessionsErrorExercise() {
         CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
+        String destinationEmail = "0610809824@uma.es";
+        String excelFilePath = "C:\\Users\\mda00009\\Desktop\\Excel_Files\\";
 
         when(exerciseRepository.findAllExerciseIds()).thenReturn(Collections.singletonList(2));
 
         CustomException e = assertThrows(CustomException.class, () -> {
-            sessionManagementServiceImpl.createSessions(createSessionsRequest);
+            sessionManagementServiceImpl.createSessions(Boolean.TRUE, Boolean.TRUE,
+                    Boolean.TRUE, createSessionsRequest, destinationEmail, excelFilePath);
         });
 
         assertEquals("The exercise with ID 1 is not created", e.getMessage());

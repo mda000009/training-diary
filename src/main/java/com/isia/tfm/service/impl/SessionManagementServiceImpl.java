@@ -136,7 +136,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
             try (Workbook workbook = new XSSFWorkbook()) {
                 Sheet sheet = createSheetWithHeader(workbook);
                 fillSheetWithData(sheet, session, exerciseEntityList);
-                saveWorkbookToFile(workbook, session.getSessionId());
+                saveWorkbookToFile(workbook, session.getSessionId(), filePath);
             }
         }
     }

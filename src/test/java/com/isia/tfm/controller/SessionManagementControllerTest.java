@@ -20,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @AutoConfigureObservability
@@ -49,7 +49,7 @@ class SessionManagementControllerTest {
         String destinationEmail = "0610809824@uma.es";
         String excelFilePath = "C:\\Users\\mda00009\\Desktop\\Excel_Files\\";
 
-        when(sessionManagementService.createSessions(any(CreateSessionsRequest.class))).thenReturn(createSessions201Response);
+        when(sessionManagementService.createSessions(anyBoolean(), anyBoolean(), anyBoolean(), any(CreateSessionsRequest.class), anyString(), anyString())).thenReturn(createSessions201Response);
 
         ResponseEntity<CreateSessions201Response> response = sessionManagementController.createSessions(
                 Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, createSessionsRequest, destinationEmail, excelFilePath);
