@@ -89,7 +89,7 @@ paths:
   /createSessions:
     post:
       summary: Create a list of sessions. Additionally, the endpoint can calculate the training volume and save it in a database, send an informative email to the personal trainer and/or save an Excel for each training session with its associated information
-      description: This endpoint allows the creation of a list of sessions for a microcycle in the system.
+      description: This endpoint allows the creation of a list of sessions for a user in the system.
       operationId: createSessions
       tags:
         - Session management
