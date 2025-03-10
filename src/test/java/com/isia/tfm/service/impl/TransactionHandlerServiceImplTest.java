@@ -71,7 +71,7 @@ class TransactionHandlerServiceImplTest {
         List<ReturnSession> response = transactionHandlerServiceImpl.saveSessions(
                 createSessionsRequest.getSessions(), Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
 
-        List<ReturnSession> expectedResponse = Collections.singletonList(new ReturnSession(1, "Session successfully created"));
+        List<ReturnSession> expectedResponse = Collections.singletonList(new ReturnSession(1, "Session successfully created"), "false", "false", "false");
 
         assertEquals(expectedResponse, response);
     }

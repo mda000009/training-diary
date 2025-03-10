@@ -14,16 +14,16 @@ public interface TransactionHandlerService {
 
     /**
      *
-     * @param sessionList the session list
+     * @param session the session
      * @param exerciseEntityList the exercise entity list
-     * @return {@link List<ReturnSession>}
+     * @return {@link ReturnSession}
      */
-    List<ReturnSession> saveSessions(List<Session> sessionList, List<ExerciseEntity> exerciseEntityList);
+    ReturnSession saveSession(Session session, List<ExerciseEntity> exerciseEntityList);
 
     /**
      *
-     * @param sessionList the session list
+     * @param session the session
      */
-    void saveTrainingVolume(List<Session> sessionList);
+    void saveTrainingVolume(Session session);
 
 }

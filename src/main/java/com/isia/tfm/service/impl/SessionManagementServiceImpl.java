@@ -41,56 +41,48 @@ public class SessionManagementServiceImpl implements SessionManagementService {
     private String senderEmail;
 
     @Override
-    public CreateSessions201Response createSessions(Boolean calculateAndSaveTrainingVolume, Boolean sendEmail,
-                                                    Boolean saveExcel, CreateSessionsRequest createSessionsRequest,
-                                                    String destinationEmail, String excelFilePath) {
-        CreateSessions201Response createSessions201Response = new CreateSessions201Response();
-        createSessions201Response.setSavedTrainingVolumeSuccessfully("false");
-        createSessions201Response.setSentEmailSuccessfully("false");
-        createSessions201Response.setSavedExcelSuccessfully("false");
-        List<ExerciseEntity> exerciseEntityList = getExerciseToCreateList(createSessionsRequest);
-        List<ReturnSession> returnSessionList =
-                transactionHandlerService.saveSessions(createSessionsRequest.getSessions(), exerciseEntityList);
-        createSessions201Response.setSessions(returnSessionList);
-        List<Session> filteredSessionList = filterSessionsCreated(createSessionsRequest.getSessions(), returnSessionList);
-        log.debug("Saved training sessions");
+    public ReturnSession createSession(Boolean calculateAndSaveTrainingVolume, Boolean sendEmail, Boolean saveExcel,
+                                        Session session, String destinationEmail, String excelFilePath) {
+        List<ExerciseEntity> exerciseEntityList = getExerciseToCreateList(session);
+        ReturnSession returnSession =
+                transactionHandlerService.saveSession(session, exerciseEntityList);
+        log.debug("Saved training session");
 
-        if (calculateAndSaveTrainingVolume) {
-            try {
-                transactionHandlerService.saveTrainingVolume(filteredSessionList);
-                createSessions201Response.setSavedTrainingVolumeSuccessfully("true");
-                log.debug("Training volume for each exercise of each session saved");
-            } catch (Exception e) {
-                log.error("Training volume could not be calculated and saved");
+        if (returnSession.getStatus().equals("Session successfully created")) {
+            if (calculateAndSaveTrainingVolume) {
+                try {
+                    transactionHandlerService.saveTrainingVolume(session);
+                    returnSession.setSavedTrainingVolumeSuccessfully("true");
+                    log.debug("Training volume for all exercises saved");
+                } catch (Exception e) {
+                    log.error("Training volume could not be calculated and saved");
+                }
+            }
+            if (sendEmail) {
+                try {
+                    sendTrainingSessionEmail(destinationEmail, session);
+                    returnSession.setSentEmailSuccessfully("true");
+                    log.debug("Email successfully sent");
+                } catch (Exception e) {
+                    log.error("Email could not be sent");
+                }
+            }
+            if (saveExcel) {
+                try {
+                    createExcelFile(session, exerciseEntityList, excelFilePath);
+                    returnSession.setSavedExcelSuccessfully("true");
+                    log.debug("Excel saved");
+                } catch (Exception e) {
+                    log.error("Excel not be saved");
+                }
             }
         }
 
-        if (sendEmail) {
-            try {
-                sendTrainingSessionEmail(destinationEmail, filteredSessionList);
-                createSessions201Response.setSentEmailSuccessfully("true");
-                log.debug("An email successfully sent for each saved training session");
-            } catch (Exception e) {
-                log.error("The information email could not be sent");
-            }
-        }
-
-        if (saveExcel) {
-            try {
-                createExcelFile(filteredSessionList, exerciseEntityList, excelFilePath);
-                createSessions201Response.setSavedExcelSuccessfully("true");
-                log.debug("An excel successfully saved for each saved training session");
-            } catch (Exception e) {
-                log.error("The excel not be saved");
-            }
-        }
-
-        return createSessions201Response;
+        return returnSession;
     }
 
-    private List<ExerciseEntity> getExerciseToCreateList(CreateSessionsRequest createSessionsRequest) {
-        List<Integer> exerciseToCreateList = createSessionsRequest.getSessions().stream()
-                .flatMap(session -> session.getTrainingVariables().stream())
+    private List<ExerciseEntity> getExerciseToCreateList(Session session) {
+        List<Integer> exerciseToCreateList = session.getTrainingVariables().stream()
                 .map(TrainingVariable::getExerciseId)
                 .toList();
         Set<Integer> createdExerciseSet = new HashSet<>(exerciseRepository.findAllExerciseIds());
@@ -105,39 +97,20 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         return exerciseRepository.findAllById(exerciseToCreateList);
     }
 
-    private List<Session> filterSessionsCreated(List<Session> sessionList, List<ReturnSession> returnSessionList) {
-        List<Integer> validSessionIds = returnSessionList.stream()
-                .filter(returnSession -> "Session successfully created".equals(returnSession.getStatus()))
-                .map(ReturnSession::getSessionId)
-                .toList();
-        return sessionList.stream()
-                .filter(session -> validSessionIds.contains(session.getSessionId()))
-                .toList();
-    }
-
-    private void sendTrainingSessionEmail(String destinationEmail, List<Session> sessionList) {
-        String user = sessionList.get(0).getUsername();
-        sessionList.stream()
-                .map(session -> createEmailMessage(destinationEmail, user, session))
-                .forEach(emailSender::send);
-    }
-
-    private SimpleMailMessage createEmailMessage(String destinationEmail, String user, Session session) {
+    private void sendTrainingSessionEmail(String destinationEmail, Session session) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(senderEmail);
         message.setTo(destinationEmail);
         message.setSubject("Training Diary App");
-        message.setText("User " + user + " has registered a new training session on " + session.getSessionDate().toString());
-        return message;
+        message.setText("User " + session.getUsername() + " has registered a new training session on " + session.getSessionDate().toString());
+        emailSender.send(message);
     }
 
-    private void createExcelFile(List<Session> createdSessionList, List<ExerciseEntity> exerciseEntityList, String filePath) throws IOException {
-        for (Session session : createdSessionList) {
-            try (Workbook workbook = new XSSFWorkbook()) {
-                Sheet sheet = createSheetWithHeader(workbook);
-                fillSheetWithData(sheet, session, exerciseEntityList);
-                saveWorkbookToFile(workbook, session.getSessionId(), filePath);
-            }
+    private void createExcelFile(Session session, List<ExerciseEntity> exerciseEntityList, String filePath) throws IOException {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = createSheetWithHeader(workbook);
+            fillSheetWithData(sheet, session, exerciseEntityList);
+            saveWorkbookToFile(workbook, session.getSessionId(), filePath);
         }
     }
 

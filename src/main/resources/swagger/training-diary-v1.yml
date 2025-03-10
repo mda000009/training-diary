@@ -86,11 +86,11 @@ paths:
                     error: "Internal Server Error"
                     message: "Internal Server Error."
 
-  /createSessions:
+  /createSession:
     post:
-      summary: Create a list of sessions. Additionally, the endpoint can calculate the training volume and save it in a database, send an informative email to the personal trainer and/or save an Excel for each training session with its associated information
-      description: This endpoint allows the creation of a list of sessions for a user in the system.
-      operationId: createSessions
+      summary: Create a session. Additionally, the endpoint can calculate the training volume and save it in a database, send an informative email to the personal trainer and/or save an Excel with the session information
+      description: This endpoint allows the creation of a session for a user in the system.
+      operationId: createSession
       tags:
         - Session management
       parameters:
@@ -118,7 +118,7 @@ paths:
           required: true
           schema:
             type: boolean
-          description: Flag to save the information of each training session in an Excel.
+          description: Flag to save the session information in an Excel.
         - name: excelFilePath
           in: query
           required: false
@@ -127,40 +127,19 @@ paths:
           description: Directory path to save the Excel file (required if saveExcel).
           example: C:\\Users\\mda00009\\Desktop\\Excel_Files\\
       requestBody:
-        description: List of sessions to create, including the training variables.
+        description: Session to create, including the training variables.
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                sessions:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Session'
-              required:
-                - sessions
+              $ref: '#/components/schemas/Session'
       responses:
         '201':
           description: Created.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  sessions:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ReturnSession'
-                  savedTrainingVolumeSuccessfully:
-                    type: string
-                    example: true
-                  sentEmailSuccessfully:
-                    type: string
-                    example: true
-                  savedExcelSuccessfully:
-                    type: string
-                    example: true
+                $ref: '#/components/schemas/ReturnSession'
         '400':
           description: Bad Request.
           content:
@@ -368,9 +347,24 @@ components:
           type: string
           description: Session status.
           example: "Session successfully created"
+        savedTrainingVolumeSuccessfully:
+          type: string
+          description: Indicates whether the training volume has been saved successfully.
+          example: true
+        sentEmailSuccessfully:
+          type: string
+          description: Indicates whether the email has been sent successfully.
+          example: true
+        savedExcelSuccessfully:
+          description: Indicates whether the Excel has been saved successfully.
+          type: string
+          example: true
       required:
         - sessionId
         - status
+        - savedTrainingVolumeSuccessfully
+        - sentEmailSuccessfully
+        - savedExcelSuccessfully
 
     TrainingVariable:
       type: object

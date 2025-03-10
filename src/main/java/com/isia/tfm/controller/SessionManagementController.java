@@ -1,8 +1,8 @@
 package com.isia.tfm.controller;
 
 import com.isia.tfm.api.SessionManagementApi;
-import com.isia.tfm.model.CreateSessions201Response;
-import com.isia.tfm.model.CreateSessionsRequest;
+import com.isia.tfm.model.ReturnSession;
+import com.isia.tfm.model.Session;
 import com.isia.tfm.service.SessionManagementService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +23,11 @@ public class SessionManagementController implements SessionManagementApi {
     }
 
     @Override
-    public ResponseEntity<CreateSessions201Response> createSessions(Boolean calculateAndSaveTrainingVolume, Boolean sendEmail,
-                                                                    Boolean saveExcel, CreateSessionsRequest createSessionsRequest,
-                                                                    String destinationEmail, String excelFilePath) {
-        CreateSessions201Response response = sessionManagementService.createSessions(
-                calculateAndSaveTrainingVolume, sendEmail, saveExcel, createSessionsRequest, destinationEmail, excelFilePath);
+    public ResponseEntity<ReturnSession> createSession(Boolean calculateAndSaveTrainingVolume, Boolean sendEmail,
+                                                       Boolean saveExcel, Session session,
+                                                       String destinationEmail, String excelFilePath) {
+        ReturnSession response = sessionManagementService.createSession(
+                calculateAndSaveTrainingVolume, sendEmail, saveExcel, session, destinationEmail, excelFilePath);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
