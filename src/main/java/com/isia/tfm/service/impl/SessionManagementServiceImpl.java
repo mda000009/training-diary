@@ -41,36 +41,50 @@ public class SessionManagementServiceImpl implements SessionManagementService {
     private String senderEmail;
 
     @Override
-    public CreateSessions201Response createSessions(CreateSessionsRequest createSessionsRequest) {
+    public CreateSessions201Response createSessions(Boolean calculateAndSaveTrainingVolume, Boolean sendEmail,
+                                                    Boolean saveExcel, CreateSessionsRequest createSessionsRequest,
+                                                    String destinationEmail, String excelFilePath) {
+        CreateSessions201Response createSessions201Response = new CreateSessions201Response();
+        createSessions201Response.setSavedTrainingVolumeSuccessfully("false");
+        createSessions201Response.setSentEmailSuccessfully("false");
+        createSessions201Response.setSavedExcelSuccessfully("false");
         List<ExerciseEntity> exerciseEntityList = getExerciseToCreateList(createSessionsRequest);
         List<ReturnSession> returnSessionList =
                 transactionHandlerService.saveSessions(createSessionsRequest.getSessions(), exerciseEntityList);
+        createSessions201Response.setSessions(returnSessionList);
         List<Session> filteredSessionList = filterSessionsCreated(createSessionsRequest.getSessions(), returnSessionList);
         log.debug("Saved training sessions");
 
-        try {
-            transactionHandlerService.saveTrainingVolume(filteredSessionList);
-            log.debug("Training volume for each exercise of each session saved");
-        } catch (Exception e) {
-            log.error("Training volume could not be calculated and saved");
+        if (calculateAndSaveTrainingVolume) {
+            try {
+                transactionHandlerService.saveTrainingVolume(filteredSessionList);
+                createSessions201Response.setSavedTrainingVolumeSuccessfully("true");
+                log.debug("Training volume for each exercise of each session saved");
+            } catch (Exception e) {
+                log.error("Training volume could not be calculated and saved");
+            }
         }
 
-        try {
-            sendTrainingSessionEmail(createSessionsRequest.getDestinationEmail(), filteredSessionList);
-            log.debug("An email successfully sent for each saved training session");
-        } catch (Exception e) {
-            log.error("The information email could not be sent");
+        if (sendEmail) {
+            try {
+                sendTrainingSessionEmail(destinationEmail, filteredSessionList);
+                createSessions201Response.setSentEmailSuccessfully("true");
+                log.debug("An email successfully sent for each saved training session");
+            } catch (Exception e) {
+                log.error("The information email could not be sent");
+            }
         }
 
-        try {
-            createExcelFile(filteredSessionList, exerciseEntityList);
-            log.debug("An excel successfully saved for each saved training session");
-        } catch (Exception e) {
-            log.error("The excel not be saved");
+        if (saveExcel) {
+            try {
+                createExcelFile(filteredSessionList, exerciseEntityList, excelFilePath);
+                createSessions201Response.setSavedExcelSuccessfully("true");
+                log.debug("An excel successfully saved for each saved training session");
+            } catch (Exception e) {
+                log.error("The excel not be saved");
+            }
         }
 
-        CreateSessions201Response createSessions201Response = new CreateSessions201Response();
-        createSessions201Response.setSessions(returnSessionList);
         return createSessions201Response;
     }
 
@@ -117,7 +131,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         return message;
     }
 
-    private void createExcelFile(List<Session> createdSessionList, List<ExerciseEntity> exerciseEntityList) throws IOException {
+    private void createExcelFile(List<Session> createdSessionList, List<ExerciseEntity> exerciseEntityList, String filePath) throws IOException {
         for (Session session : createdSessionList) {
             try (Workbook workbook = new XSSFWorkbook()) {
                 Sheet sheet = createSheetWithHeader(workbook);
@@ -154,10 +168,10 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         }
     }
 
-    protected void saveWorkbookToFile(Workbook workbook, Integer sessionId) throws IOException {
+    protected void saveWorkbookToFile(Workbook workbook, Integer sessionId, String filePath) throws IOException {
         String fileName = "SESSION_ID_" + sessionId + "_DATA.xlsx";
-        String filePath = "C:\\Users\\manue\\OneDrive\\Escritorio\\TFM\\Excel_examples\\" + fileName;
-        try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
+        String filePathToSave = filePath + fileName;
+        try (FileOutputStream fileOut = new FileOutputStream(filePathToSave)) {
             workbook.write(fileOut);
         }
     }

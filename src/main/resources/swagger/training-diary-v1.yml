@@ -88,11 +88,44 @@ paths:
 
   /createSessions:
     post:
-      summary: Create a list of sessions, calculate the training volume and save it in the database and send an informative email
+      summary: Create a list of sessions. Additionally, the endpoint can calculate the training volume and save it in a database, send an informative email to the personal trainer and/or save an Excel for each training session with its associated information
       description: This endpoint allows the creation of a list of sessions for a microcycle in the system.
       operationId: createSessions
       tags:
         - Session management
+      parameters:
+        - name: calculateAndSaveTrainingVolume
+          in: query
+          required: true
+          schema:
+            type: boolean
+          description: Flag to calculate and save training volume.
+        - name: sendEmail
+          in: query
+          required: true
+          schema:
+            type: boolean
+          description: Flag to send an email.
+        - name: destinationEmail
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Personal trainer email (required if sendEmail).
+          example: 0610809824@uma.es
+        - name: saveExcel
+          in: query
+          required: true
+          schema:
+            type: boolean
+          description: Flag to save the information of each training session in an Excel.
+        - name: excelFilePath
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Directory path to save the Excel file (required if saveExcel).
+          example: C:\\Users\\mda00009\\Desktop\\Excel_Files\\
       requestBody:
         description: List of sessions to create, including the training variables.
         required: true
@@ -105,13 +138,8 @@ paths:
                   type: array
                   items:
                     $ref: '#/components/schemas/Session'
-                destinationEmail:
-                  type: string
-                  description: Personal trainer email.
-                  example: 0610809824@uma.es
               required:
                 - sessions
-                - destinationEmail
       responses:
         '201':
           description: Created.
@@ -124,6 +152,15 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ReturnSession'
+                  savedTrainingVolumeSuccessfully:
+                    type: string
+                    example: true
+                  sentEmailSuccessfully:
+                    type: string
+                    example: true
+                  savedExcelSuccessfully:
+                    type: string
+                    example: true
         '400':
           description: Bad Request.
           content:

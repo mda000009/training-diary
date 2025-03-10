@@ -43,10 +43,16 @@ class SessionManagementControllerTest {
         CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
         CreateSessions201Response createSessions201Response = new CreateSessions201Response();
         createSessions201Response.setSessions(Collections.singletonList(new ReturnSession(1, "Session successfully created")));
+        createSessions201Response.setSavedTrainingVolumeSuccessfully("true");
+        createSessions201Response.setSentEmailSuccessfully("true");
+        createSessions201Response.setSavedExcelSuccessfully("true");
+        String destinationEmail = "0610809824@uma.es";
+        String excelFilePath = "C:\\Users\\mda00009\\Desktop\\Excel_Files\\";
 
         when(sessionManagementService.createSessions(any(CreateSessionsRequest.class))).thenReturn(createSessions201Response);
 
-        ResponseEntity<CreateSessions201Response> response = sessionManagementController.createSessions(createSessionsRequest);
+        ResponseEntity<CreateSessions201Response> response = sessionManagementController.createSessions(
+                Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, createSessionsRequest, destinationEmail, excelFilePath);
 
         ResponseEntity<CreateSessions201Response> expectedResponse = new ResponseEntity<>(createSessions201Response, HttpStatus.CREATED);
 
