@@ -15,7 +15,7 @@ public interface SessionManagementService {
      * @param saveExcel the save excel
      * @param createSessionsRequest the create sessions request
      * @param destinationEmail the destination email
-     * @param excelFilePath the excel file path
+     * @param excelFilePath the Excel file path
      * @return {@link CreateSessions201Response}
      */
     CreateSessions201Response createSessions(Boolean calculateAndSaveTrainingVolume, Boolean sendEmail,
