@@ -41,8 +41,8 @@ public class SessionManagementServiceImpl implements SessionManagementService {
     private String senderEmail;
 
     @Override
-    public ReturnSession createSession(Boolean calculateAndSaveTrainingVolume, Boolean sendEmail, Boolean saveExcel,
-                                        Session session, String destinationEmail, String excelFilePath) {
+    public ReturnSession createSession(boolean calculateAndSaveTrainingVolume, boolean sendEmail, boolean saveExcel,
+                                       Session session, String destinationEmail, String excelFilePath) {
         List<ExerciseEntity> exerciseEntityList = getExerciseToCreateList(session);
         ReturnSession returnSession = transactionHandlerService.saveSession(session, exerciseEntityList);
         log.debug("Saved training session");

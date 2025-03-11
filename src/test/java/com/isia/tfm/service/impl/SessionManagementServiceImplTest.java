@@ -70,8 +70,8 @@ class SessionManagementServiceImplTest {
                 .thenReturn(new ReturnSession(1, "Session successfully created",
                         "true", "true", "true"));
 
-        ReturnSession response = sessionManagementServiceImpl.createSession(Boolean.TRUE, Boolean.TRUE,
-                Boolean.TRUE, session, destinationEmail, excelFilePath);
+        boolean flag = true;
+        ReturnSession response = sessionManagementServiceImpl.createSession(flag, flag, flag, session, destinationEmail, excelFilePath);
 
         verify(transactionHandlerService, times(1)).saveTrainingVolume(any(Session.class));
         verify(emailSender, times(1)).send(any(SimpleMailMessage.class));
@@ -94,9 +94,9 @@ class SessionManagementServiceImplTest {
 
         when(exerciseRepository.findAllExerciseIds()).thenReturn(Collections.singletonList(2));
 
+        boolean flag = true;
         CustomException e = assertThrows(CustomException.class, () -> {
-            sessionManagementServiceImpl.createSession(Boolean.TRUE, Boolean.TRUE,
-                    Boolean.TRUE, session, destinationEmail, excelFilePath);
+            sessionManagementServiceImpl.createSession(flag, flag, flag, session, destinationEmail, excelFilePath);
         });
 
         assertEquals("The exercise with ID 1 is not created", e.getMessage());

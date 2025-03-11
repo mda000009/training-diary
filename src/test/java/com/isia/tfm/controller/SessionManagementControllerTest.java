@@ -49,8 +49,9 @@ class SessionManagementControllerTest {
 
         when(sessionManagementService.createSession(anyBoolean(), anyBoolean(), anyBoolean(), any(Session.class), anyString(), anyString())).thenReturn(returnSession);
 
+        boolean flag = true;
         ResponseEntity<ReturnSession> response = sessionManagementController.createSession(
-                Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, session, destinationEmail, excelFilePath);
+                flag, flag, flag, session, destinationEmail, excelFilePath);
 
         ResponseEntity<ReturnSession> expectedResponse = new ResponseEntity<>(returnSession, HttpStatus.CREATED);
 

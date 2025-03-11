@@ -23,8 +23,8 @@ public class SessionManagementController implements SessionManagementApi {
     }
 
     @Override
-    public ResponseEntity<ReturnSession> createSession(Boolean calculateAndSaveTrainingVolume, Boolean sendEmail,
-                                                       Boolean saveExcel, Session session,
+    public ResponseEntity<ReturnSession> createSession(boolean calculateAndSaveTrainingVolume, boolean sendEmail,
+                                                       boolean saveExcel, Session session,
                                                        String destinationEmail, String excelFilePath) {
         ReturnSession response = sessionManagementService.createSession(
                 calculateAndSaveTrainingVolume, sendEmail, saveExcel, session, destinationEmail, excelFilePath);

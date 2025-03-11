@@ -18,8 +18,8 @@ public interface SessionManagementService {
      * @param excelFilePath the Excel file path
      * @return {@link ReturnSession}
      */
-    ReturnSession createSession(Boolean calculateAndSaveTrainingVolume, Boolean sendEmail,
-                                 Boolean saveExcel, Session session,
-                                 String destinationEmail, String excelFilePath);
+    ReturnSession createSession(boolean calculateAndSaveTrainingVolume, boolean sendEmail,
+                                boolean saveExcel, Session session,
+                                String destinationEmail, String excelFilePath);
 
 }

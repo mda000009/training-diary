@@ -154,6 +154,7 @@
 						<typeMapping>float=java.math.BigDecimal</typeMapping>
 						<typeMapping>date=LocalDate</typeMapping>
 						<typeMapping>DateTime=LocalDateTime</typeMapping>
+						<typeMapping>Boolean=boolean</typeMapping>
 					</typeMappings>
 					<importMappings>
 						<importMapping>LocalDate=java.time.LocalDate</importMapping>
