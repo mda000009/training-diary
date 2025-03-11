@@ -18,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.actuate.observability.AutoCon
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,16 +47,16 @@ class TransactionHandlerServiceImplTest {
     }
 
     @Test
-    void saveSessions() {
+    void saveSession() {
         User user = TestUtils.readMockFile("user", User.class);
         ApplicationUserEntity applicationUserEntity = new ApplicationUserEntity(user.getUsername(), user.getFirstName(),
                 user.getLastName(), user.getPassword(), user.getBirthdate(), "Male", user.getEmail(),
                 user.getPhoneNumber(), LocalDateTime.now());
-        CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
+        Session session = TestUtils.readMockFile("session", Session.class);
         SessionEntity sessionEntity = new SessionEntity(1, "Session 1", LocalDate.now(), applicationUserEntity);
         ExerciseEntity exerciseEntity = new ExerciseEntity(1, "Bench Press");
         SessionExerciseEntity sessionExerciseEntity = new SessionExerciseEntity(1, 1, null, sessionEntity, exerciseEntity);
-        TrainingVariable trainingVariable = createSessionsRequest.getSessions().get(0).getTrainingVariables().get(0);
+        TrainingVariable trainingVariable = session.getTrainingVariables().get(0);
         TrainingVariablesEntity trainingVariablesEntity = new TrainingVariablesEntity(
                 trainingVariable.getSetNumber(), sessionExerciseEntity,
                 trainingVariable.getWeight(), trainingVariable.getRepetitions(), trainingVariable.getRir());
@@ -68,10 +67,11 @@ class TransactionHandlerServiceImplTest {
         when(sessionExerciseRepository.save(any(SessionExerciseEntity.class))).thenReturn(sessionExerciseEntity);
         when(trainingVariablesRepository.save(any(TrainingVariablesEntity.class))).thenReturn(trainingVariablesEntity);
 
-        List<ReturnSession> response = transactionHandlerServiceImpl.saveSessions(
-                createSessionsRequest.getSessions(), Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
+        ReturnSession response = transactionHandlerServiceImpl.saveSession(
+                session, Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
 
-        List<ReturnSession> expectedResponse = Collections.singletonList(new ReturnSession(1, "Session successfully created"));
+        ReturnSession expectedResponse = new ReturnSession(1, "Session successfully created",
+                "false", "false", "false");
 
         assertEquals(expectedResponse, response);
     }
@@ -82,11 +82,11 @@ class TransactionHandlerServiceImplTest {
         ApplicationUserEntity applicationUserEntity = new ApplicationUserEntity(user.getUsername(), user.getFirstName(),
                 user.getLastName(), user.getPassword(), user.getBirthdate(), "Male", user.getEmail(),
                 user.getPhoneNumber(), LocalDateTime.now());
-        CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
+        Session session = TestUtils.readMockFile("session", Session.class);
         SessionEntity sessionEntity = new SessionEntity(1, "Session 1", LocalDate.now(), applicationUserEntity);
         ExerciseEntity exerciseEntity = new ExerciseEntity(1, "Bench Press");
         SessionExerciseEntity sessionExerciseEntity = new SessionExerciseEntity(1, 1, null, sessionEntity, exerciseEntity);
-        TrainingVariable trainingVariable = createSessionsRequest.getSessions().get(0).getTrainingVariables().get(0);
+        TrainingVariable trainingVariable = session.getTrainingVariables().get(0);
         TrainingVariablesEntity trainingVariablesEntity = new TrainingVariablesEntity(
                 trainingVariable.getSetNumber(), sessionExerciseEntity,
                 trainingVariable.getWeight(), trainingVariable.getRepetitions(), trainingVariable.getRir());
@@ -95,7 +95,7 @@ class TransactionHandlerServiceImplTest {
         when(trainingVariablesRepository.findBySessionExercise(sessionExerciseEntity)).thenReturn(Collections.singletonList(trainingVariablesEntity));
         when(sessionExerciseRepository.save(any(SessionExerciseEntity.class))).thenReturn(sessionExerciseEntity);
 
-        transactionHandlerServiceImpl.saveTrainingVolume(createSessionsRequest.getSessions());
+        transactionHandlerServiceImpl.saveTrainingVolume(session);
 
         verify(sessionExerciseRepository, times(1)).findBySessionId(1);
         verify(trainingVariablesRepository, times(1)).findBySessionExercise(sessionExerciseEntity);
@@ -103,19 +103,36 @@ class TransactionHandlerServiceImplTest {
     }
 
     @Test
-    void saveSessionsErrorUser() {
-        CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
+    void saveSessionErrorUser() {
+        Session session = TestUtils.readMockFile("session", Session.class);
 
-        when(applicationUserRepository.findById(createSessionsRequest.getSessions().get(0).getUsername())).thenReturn(Optional.empty());
+        when(applicationUserRepository.findById(session.getUsername())).thenReturn(Optional.empty());
 
-        CustomException e = assertThrows(CustomException.class, () -> callSaveSessions(createSessionsRequest));
+        CustomException e = assertThrows(CustomException.class, () -> callSaveSession(session));
 
         assertEquals("User with username juanpereza not found", e.getMessage());
     }
 
-    private void callSaveSessions(CreateSessionsRequest createSessionsRequest) {
-        transactionHandlerServiceImpl.saveSessions(
-                createSessionsRequest.getSessions(), Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
+    @Test
+    void saveSessionErrorSession() {
+        User user = TestUtils.readMockFile("user", User.class);
+        ApplicationUserEntity applicationUserEntity = new ApplicationUserEntity(user.getUsername(), user.getFirstName(),
+                user.getLastName(), user.getPassword(), user.getBirthdate(), "Male", user.getEmail(),
+                user.getPhoneNumber(), LocalDateTime.now());
+        Session session = TestUtils.readMockFile("session", Session.class);
+        SessionEntity sessionEntity = new SessionEntity(1, "example", LocalDate.now(), applicationUserEntity);
+
+        when(applicationUserRepository.findById(user.getUsername())).thenReturn(Optional.of(applicationUserEntity));
+        when(sessionRepository.findById(any(Integer.class))).thenReturn(Optional.of(sessionEntity));
+
+        CustomException e = assertThrows(CustomException.class, () -> callSaveSession(session));
+
+        assertEquals("The sessionId 1 was already created", e.getMessage());
+    }
+
+    private void callSaveSession(Session session) {
+        transactionHandlerServiceImpl.saveSession(
+                session, Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
     }
 
 }

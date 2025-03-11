@@ -86,44 +86,60 @@ paths:
                     error: "Internal Server Error"
                     message: "Internal Server Error."
 
-  /createSessions:
+  /createSession:
     post:
-      summary: Create a list of sessions, calculate the training volume and save it in the database and send an informative email
-      description: This endpoint allows the creation of a list of sessions for a microcycle in the system.
-      operationId: createSessions
+      summary: Create a session. Additionally, the endpoint can calculate the training volume and save it in a database, send an informative email to the personal trainer and/or save an Excel with the session information
+      description: This endpoint allows the creation of a session for a user in the system.
+      operationId: createSession
       tags:
         - Session management
+      parameters:
+        - name: calculateAndSaveTrainingVolume
+          in: query
+          required: true
+          schema:
+            type: boolean
+          description: Flag to calculate and save training volume.
+        - name: sendEmail
+          in: query
+          required: true
+          schema:
+            type: boolean
+          description: Flag to send an email.
+        - name: destinationEmail
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Personal trainer email (required if sendEmail).
+          example: 0610809824@uma.es
+        - name: saveExcel
+          in: query
+          required: true
+          schema:
+            type: boolean
+          description: Flag to save the session information in an Excel.
+        - name: excelFilePath
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Directory path to save the Excel file (required if saveExcel).
+          example: C:/Users/mda00009/Desktop/Excel_Files/
       requestBody:
-        description: List of sessions to create, including the training variables.
+        description: Session to create, including the training variables.
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                sessions:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Session'
-                destinationEmail:
-                  type: string
-                  description: Personal trainer email.
-                  example: 0610809824@uma.es
-              required:
-                - sessions
-                - destinationEmail
+              $ref: '#/components/schemas/Session'
       responses:
         '201':
           description: Created.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  sessions:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ReturnSession'
+                $ref: '#/components/schemas/ReturnSession'
         '400':
           description: Bad Request.
           content:
@@ -150,6 +166,19 @@ paths:
                     status: "404"
                     error: "Not found"
                     message: "Resource not found."
+        '409':
+          description: Conflict.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                conflict:
+                  summary: There are conflicts in some data
+                  value:
+                    status: "409"
+                    error: "Conflict"
+                    message: "There are conflicts in some fields."
         '500':
           description: Internal Server Error.
           content:
@@ -331,9 +360,24 @@ components:
           type: string
           description: Session status.
           example: "Session successfully created"
+        savedTrainingVolumeSuccessfully:
+          type: string
+          description: Indicates whether the training volume has been saved successfully.
+          example: true
+        sentEmailSuccessfully:
+          type: string
+          description: Indicates whether the email has been sent successfully.
+          example: true
+        savedExcelSuccessfully:
+          description: Indicates whether the Excel has been saved successfully.
+          type: string
+          example: true
       required:
         - sessionId
         - status
+        - savedTrainingVolumeSuccessfully
+        - sentEmailSuccessfully
+        - savedExcelSuccessfully
 
     TrainingVariable:
       type: object
