@@ -7,6 +7,10 @@ import java.util.Objects;
 
 public class Utils {
 
+    private Utils() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     public static List<TrainingVariable> filterTrainingVariablesByExerciseId(
             List<TrainingVariable> trainingVariableList, Integer exerciseId) {
         return trainingVariableList.stream()

@@ -20,6 +20,8 @@ import java.util.List;
 @Service
 public class TransactionHandlerServiceImpl implements TransactionHandlerService {
 
+    private static final String FALSE_STRING = "false";
+
     ApplicationUserRepository applicationUserRepository;
     SessionRepository sessionRepository;
     SessionExerciseRepository sessionExerciseRepository;
@@ -48,7 +50,7 @@ public class TransactionHandlerServiceImpl implements TransactionHandlerService 
             sessionRepository.save(sessionEntity);
             saveSessionExercises(exerciseEntityList, sessionEntity, session.getTrainingVariables());
             return new ReturnSession(sessionEntity.getSessionId(), "Session successfully created",
-                    "false", "false", "false");
+                    FALSE_STRING, FALSE_STRING, FALSE_STRING);
         } else {
             throw new CustomException("409", "Conflict", "The sessionId " + session.getSessionId().toString() + " was already created");
         }
