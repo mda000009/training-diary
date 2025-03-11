@@ -56,7 +56,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
                 log.error("Training volume could not be calculated and saved");
             }
         }
-        if (sendEmail) {
+        if (sendEmail && destinationEmail != null && !destinationEmail.isEmpty()) {
             try {
                 sendTrainingSessionEmail(destinationEmail, session);
                 returnSession.setSentEmailSuccessfully("true");
@@ -65,7 +65,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
                 log.error("Email could not be sent");
             }
         }
-        if (saveExcel) {
+        if (saveExcel && excelFilePath != null && !excelFilePath.isEmpty()) {
             try {
                 createExcelFile(session, exerciseEntityList, excelFilePath);
                 returnSession.setSavedExcelSuccessfully("true");
