@@ -50,8 +50,7 @@ public class TransactionHandlerServiceImpl implements TransactionHandlerService 
             return new ReturnSession(sessionEntity.getSessionId(), "Session successfully created",
                     "false", "false", "false");
         } else {
-            return new ReturnSession(sessionEntity.getSessionId(), "The sessionId was already created",
-                    "false", "false", "false");
+            throw new CustomException("409", "Conflict", "The sessionId " + session.getSessionId().toString() + " was already created");
         }
     }
 

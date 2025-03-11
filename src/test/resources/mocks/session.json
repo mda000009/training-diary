@@ -1,0 +1,15 @@
+{
+  "username": "juanpereza",
+  "sessionId": 1,
+  "sessionName": "Session 1",
+  "sessionDate": "2024-06-25",
+  "training_variables": [
+    {
+      "setNumber": 1,
+      "exerciseId": 1,
+      "weight": 20,
+      "repetitions": 10,
+      "rir": 1
+    }
+  ]
+}

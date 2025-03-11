@@ -44,37 +44,34 @@ public class SessionManagementServiceImpl implements SessionManagementService {
     public ReturnSession createSession(Boolean calculateAndSaveTrainingVolume, Boolean sendEmail, Boolean saveExcel,
                                         Session session, String destinationEmail, String excelFilePath) {
         List<ExerciseEntity> exerciseEntityList = getExerciseToCreateList(session);
-        ReturnSession returnSession =
-                transactionHandlerService.saveSession(session, exerciseEntityList);
+        ReturnSession returnSession = transactionHandlerService.saveSession(session, exerciseEntityList);
         log.debug("Saved training session");
 
-        if (returnSession.getStatus().equals("Session successfully created")) {
-            if (calculateAndSaveTrainingVolume) {
-                try {
-                    transactionHandlerService.saveTrainingVolume(session);
-                    returnSession.setSavedTrainingVolumeSuccessfully("true");
-                    log.debug("Training volume for all exercises saved");
-                } catch (Exception e) {
-                    log.error("Training volume could not be calculated and saved");
-                }
+        if (calculateAndSaveTrainingVolume) {
+            try {
+                transactionHandlerService.saveTrainingVolume(session);
+                returnSession.setSavedTrainingVolumeSuccessfully("true");
+                log.debug("Training volume for all exercises saved");
+            } catch (Exception e) {
+                log.error("Training volume could not be calculated and saved");
             }
-            if (sendEmail) {
-                try {
-                    sendTrainingSessionEmail(destinationEmail, session);
-                    returnSession.setSentEmailSuccessfully("true");
-                    log.debug("Email successfully sent");
-                } catch (Exception e) {
-                    log.error("Email could not be sent");
-                }
+        }
+        if (sendEmail) {
+            try {
+                sendTrainingSessionEmail(destinationEmail, session);
+                returnSession.setSentEmailSuccessfully("true");
+                log.debug("Email successfully sent");
+            } catch (Exception e) {
+                log.error("Email could not be sent");
             }
-            if (saveExcel) {
-                try {
-                    createExcelFile(session, exerciseEntityList, excelFilePath);
-                    returnSession.setSavedExcelSuccessfully("true");
-                    log.debug("Excel saved");
-                } catch (Exception e) {
-                    log.error("Excel not be saved");
-                }
+        }
+        if (saveExcel) {
+            try {
+                createExcelFile(session, exerciseEntityList, excelFilePath);
+                returnSession.setSavedExcelSuccessfully("true");
+                log.debug("Excel saved");
+            } catch (Exception e) {
+                log.error("Excel not be saved");
             }
         }
 
