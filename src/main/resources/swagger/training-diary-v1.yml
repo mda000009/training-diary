@@ -125,7 +125,7 @@ paths:
           schema:
             type: string
           description: Directory path to save the Excel file (required if saveExcel).
-          example: C:\\Users\\mda00009\\Desktop\\Excel_Files\\
+          example: C:/Users/mda00009/Desktop/Excel_Files/
       requestBody:
         description: Session to create, including the training variables.
         required: true
@@ -166,6 +166,19 @@ paths:
                     status: "404"
                     error: "Not found"
                     message: "Resource not found."
+        '409':
+          description: Conflict.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                conflict:
+                  summary: There are conflicts in some data
+                  value:
+                    status: "409"
+                    error: "Conflict"
+                    message: "There are conflicts in some fields."
         '500':
           description: Internal Server Error.
           content:
