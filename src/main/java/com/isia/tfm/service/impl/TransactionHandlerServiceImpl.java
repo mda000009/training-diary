@@ -7,6 +7,7 @@ import com.isia.tfm.model.Session;
 import com.isia.tfm.model.TrainingVariable;
 import com.isia.tfm.repository.*;
 import com.isia.tfm.service.TransactionHandlerService;
+import com.isia.tfm.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,11 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
 public class TransactionHandlerServiceImpl implements TransactionHandlerService {
+
+    private static final String FALSE_STRING = "false";
 
     ApplicationUserRepository applicationUserRepository;
     SessionRepository sessionRepository;
@@ -37,24 +39,21 @@ public class TransactionHandlerServiceImpl implements TransactionHandlerService 
 
     @Override
     @Transactional
-    public List<ReturnSession> saveSessions(List<Session> sessionList, List<ExerciseEntity> exerciseEntityList) {
-        return sessionList.stream()
-                .map(session -> {
-                    ApplicationUserEntity applicationUserEntity = applicationUserRepository.findById(session.getUsername())
-                            .orElseThrow(() ->
-                                    new CustomException("404", "Not found", "User with username "
-                                            + session.getUsername() + " not found"));
-                    SessionEntity sessionEntity = new SessionEntity(session.getSessionId(), session.getSessionName(),
+    public ReturnSession saveSession(Session session, List<ExerciseEntity> exerciseEntityList) {
+        ApplicationUserEntity applicationUserEntity = applicationUserRepository.findById(session.getUsername())
+                .orElseThrow(() ->
+                        new CustomException("404", "Not found", "User with username "
+                                + session.getUsername() + " not found"));
+        SessionEntity sessionEntity = new SessionEntity(session.getSessionId(), session.getSessionName(),
                             session.getSessionDate(), applicationUserEntity);
-                    if (!sessionRepository.findById(sessionEntity.getSessionId()).isPresent()) {
-                        sessionRepository.save(sessionEntity);
-                        saveSessionExercises(exerciseEntityList, sessionEntity, session.getTrainingVariables());
-                        return new ReturnSession(sessionEntity.getSessionId(), "Session successfully created");
-                    } else {
-                        return new ReturnSession(sessionEntity.getSessionId(), "The sessionId was already created");
-                    }
-                })
-                .toList();
+        if (!sessionRepository.findById(sessionEntity.getSessionId()).isPresent()) {
+            sessionRepository.save(sessionEntity);
+            saveSessionExercises(exerciseEntityList, sessionEntity, session.getTrainingVariables());
+            return new ReturnSession(sessionEntity.getSessionId(), "Session successfully created",
+                    FALSE_STRING, FALSE_STRING, FALSE_STRING);
+        } else {
+            throw new CustomException("409", "Conflict", "The sessionId " + session.getSessionId().toString() + " was already created");
+        }
     }
 
     private void saveSessionExercises(List<ExerciseEntity> exerciseEntityList,
@@ -67,16 +66,9 @@ public class TransactionHandlerServiceImpl implements TransactionHandlerService 
                 .forEach(sessionExerciseEntity -> {
                     sessionExerciseRepository.save(sessionExerciseEntity);
                     List<TrainingVariable> filteredTrainingVariableList =
-                            filterTrainingVariablesByExerciseId(trainingVariableList, sessionExerciseEntity.getExerciseId());
+                            Utils.filterTrainingVariablesByExerciseId(trainingVariableList, sessionExerciseEntity.getExerciseId());
                     saveTrainingVariables(filteredTrainingVariableList, sessionExerciseEntity);
                 });
-    }
-
-    private List<TrainingVariable> filterTrainingVariablesByExerciseId(
-            List<TrainingVariable> trainingVariableList, Integer exerciseId) {
-        return trainingVariableList.stream()
-                .filter(trainingVariable -> Objects.equals(trainingVariable.getExerciseId(), exerciseId))
-                .toList();
     }
 
     private void saveTrainingVariables(List<TrainingVariable> trainingVariableList,
@@ -93,16 +85,14 @@ public class TransactionHandlerServiceImpl implements TransactionHandlerService 
 
     @Override
     @Transactional
-    public void saveTrainingVolume(List<Session> sessionList) {
-        sessionList.forEach(session -> {
-            List<SessionExerciseEntity> sessionExerciseEntityList =
-                    sessionExerciseRepository.findBySessionId(session.getSessionId());
-            sessionExerciseEntityList.forEach(sessionExerciseEntity -> {
-                BigDecimal trainingVolume =
-                        calculateTrainingVolume(trainingVariablesRepository.findBySessionExercise(sessionExerciseEntity));
-                sessionExerciseEntity.setTrainingVolume(trainingVolume);
-                sessionExerciseRepository.save(sessionExerciseEntity);
-            });
+    public void saveTrainingVolume(Session session) {
+        List<SessionExerciseEntity> sessionExerciseEntityList =
+                sessionExerciseRepository.findBySessionId(session.getSessionId());
+        sessionExerciseEntityList.forEach(sessionExerciseEntity -> {
+            BigDecimal trainingVolume =
+                    calculateTrainingVolume(trainingVariablesRepository.findBySessionExercise(sessionExerciseEntity));
+            sessionExerciseEntity.setTrainingVolume(trainingVolume);
+            sessionExerciseRepository.save(sessionExerciseEntity);
         });
     }
 

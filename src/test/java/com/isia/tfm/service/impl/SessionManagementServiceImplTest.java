@@ -6,6 +6,7 @@ import com.isia.tfm.model.*;
 import com.isia.tfm.repository.*;
 import com.isia.tfm.service.TransactionHandlerService;
 import com.isia.tfm.testutils.TestUtils;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.actuate.observability.AutoCon
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,34 +52,51 @@ class SessionManagementServiceImplTest {
     }
 
     @Test
-    void createSessions() {
-        CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
+    void createSession() {
+        Session session = TestUtils.readMockFile("session", Session.class);
+        String destinationEmail = "0610809824@uma.es";
+        String excelFilePath = "C:\\Users\\mda00009\\Desktop\\Excel_Files\\";
 
+        sessionManagementServiceImpl = spy(sessionManagementServiceImpl);
+        try {
+            doNothing().when(sessionManagementServiceImpl).saveWorkbookToFile(any(Workbook.class), anyInt(), anyString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         when(exerciseRepository.findAllExerciseIds()).thenReturn(Collections.singletonList(1));
         when(exerciseRepository.findAllById(any(List.class)))
                 .thenReturn(Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
-        when(transactionHandlerService.saveSessions(anyList(), anyList()))
-                .thenReturn(Collections.singletonList(new ReturnSession(1, "Session successfully created")));
+        when(transactionHandlerService.saveSession(any(Session.class), anyList()))
+                .thenReturn(new ReturnSession(1, "Session successfully created",
+                        "true", "true", "true"));
 
-        CreateSessions201Response response = sessionManagementServiceImpl.createSessions(createSessionsRequest);
+        boolean flag = true;
+        ReturnSession response = sessionManagementServiceImpl.createSession(flag, flag, flag, session, destinationEmail, excelFilePath);
 
-        verify(transactionHandlerService, times(1)).saveTrainingVolume(anyList());
+        verify(transactionHandlerService, times(1)).saveTrainingVolume(any(Session.class));
         verify(emailSender, times(1)).send(any(SimpleMailMessage.class));
 
-        CreateSessions201Response expectedResponse = new CreateSessions201Response();
-        expectedResponse.setSessions(Collections.singletonList(new ReturnSession(1, "Session successfully created")));
+        ReturnSession expectedResponse = new ReturnSession();
+        expectedResponse.setSessionId(1);
+        expectedResponse.setStatus("Session successfully created");
+        expectedResponse.setSavedTrainingVolumeSuccessfully("true");
+        expectedResponse.setSentEmailSuccessfully("true");
+        expectedResponse.setSavedExcelSuccessfully("true");
 
         assertEquals(expectedResponse, response);
     }
 
     @Test
-    void createSessionsErrorExercise() {
-        CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
+    void createSessionErrorExercise() {
+        Session session = TestUtils.readMockFile("session", Session.class);
+        String destinationEmail = "0610809824@uma.es";
+        String excelFilePath = "C:\\Users\\mda00009\\Desktop\\Excel_Files\\";
 
         when(exerciseRepository.findAllExerciseIds()).thenReturn(Collections.singletonList(2));
 
+        boolean flag = true;
         CustomException e = assertThrows(CustomException.class, () -> {
-            sessionManagementServiceImpl.createSessions(createSessionsRequest);
+            sessionManagementServiceImpl.createSession(flag, flag, flag, session, destinationEmail, excelFilePath);
         });
 
         assertEquals("The exercise with ID 1 is not created", e.getMessage());

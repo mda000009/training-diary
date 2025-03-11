@@ -1,7 +1,7 @@
 package com.isia.tfm.service;
 
-import com.isia.tfm.model.CreateSessions201Response;
-import com.isia.tfm.model.CreateSessionsRequest;
+import com.isia.tfm.model.ReturnSession;
+import com.isia.tfm.model.Session;
 
 /**
  * Service interface for managing sessions.
@@ -10,9 +10,16 @@ public interface SessionManagementService {
 
     /**
      *
-     * @param createSessionsRequest the create sessions request
-     * @return {@link CreateSessions201Response}
+     * @param calculateAndSaveTrainingVolume the calculate and save training volume
+     * @param sendEmail the send email
+     * @param saveExcel the save excel
+     * @param session the session
+     * @param destinationEmail the destination email
+     * @param excelFilePath the Excel file path
+     * @return {@link ReturnSession}
      */
-    CreateSessions201Response createSessions(CreateSessionsRequest createSessionsRequest);
+    ReturnSession createSession(boolean calculateAndSaveTrainingVolume, boolean sendEmail,
+                                boolean saveExcel, Session session,
+                                String destinationEmail, String excelFilePath);
 
 }

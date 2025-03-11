@@ -1,8 +1,7 @@
 package com.isia.tfm.controller;
 
-import com.isia.tfm.model.CreateSessions201Response;
-import com.isia.tfm.model.CreateSessionsRequest;
 import com.isia.tfm.model.ReturnSession;
+import com.isia.tfm.model.Session;
 import com.isia.tfm.service.SessionManagementService;
 import com.isia.tfm.testutils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,10 +16,8 @@ import org.springframework.boot.test.autoconfigure.actuate.observability.AutoCon
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @AutoConfigureObservability
@@ -39,16 +36,24 @@ class SessionManagementControllerTest {
     }
 
     @Test
-    void createSessions() {
-        CreateSessionsRequest createSessionsRequest = TestUtils.readMockFile("sessions", CreateSessionsRequest.class);
-        CreateSessions201Response createSessions201Response = new CreateSessions201Response();
-        createSessions201Response.setSessions(Collections.singletonList(new ReturnSession(1, "Session successfully created")));
+    void createSession() {
+        Session session = TestUtils.readMockFile("session", Session.class);
+        ReturnSession returnSession = new ReturnSession();
+        returnSession.setSessionId(1);
+        returnSession.setStatus("Session successfully created");
+        returnSession.setSavedTrainingVolumeSuccessfully("true");
+        returnSession.setSentEmailSuccessfully("true");
+        returnSession.setSavedExcelSuccessfully("true");
+        String destinationEmail = "0610809824@uma.es";
+        String excelFilePath = "C:\\Users\\mda00009\\Desktop\\Excel_Files\\";
 
-        when(sessionManagementService.createSessions(any(CreateSessionsRequest.class))).thenReturn(createSessions201Response);
+        when(sessionManagementService.createSession(anyBoolean(), anyBoolean(), anyBoolean(), any(Session.class), anyString(), anyString())).thenReturn(returnSession);
 
-        ResponseEntity<CreateSessions201Response> response = sessionManagementController.createSessions(createSessionsRequest);
+        boolean flag = true;
+        ResponseEntity<ReturnSession> response = sessionManagementController.createSession(
+                flag, flag, flag, session, destinationEmail, excelFilePath);
 
-        ResponseEntity<CreateSessions201Response> expectedResponse = new ResponseEntity<>(createSessions201Response, HttpStatus.CREATED);
+        ResponseEntity<ReturnSession> expectedResponse = new ResponseEntity<>(returnSession, HttpStatus.CREATED);
 
         assertEquals(expectedResponse, response);
     }
