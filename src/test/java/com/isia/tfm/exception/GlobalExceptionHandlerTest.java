@@ -16,7 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import jakarta.validation.ConstraintViolationException;
 import com.isia.tfm.model.ErrorDetails;
-import com.isia.tfm.model.ErrorDetailsError;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
