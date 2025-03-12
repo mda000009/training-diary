@@ -98,7 +98,7 @@ class SessionManagementServiceImplTest {
             sessionManagementServiceImpl.createSession(flag, flag, flag, session, destinationEmail, excelFilePath);
         });
 
-        assertEquals("The exercise with ID 1 is not created", e.getMessage());
+        assertEquals("The exercise with ID 1 is not created", e.getErrorDetails().getError().getMessage());
     }
 
 }

@@ -86,7 +86,7 @@ class UserManagementServiceImplTest {
             userManagementServiceImpl.createUser(user);
         });
 
-        assertEquals("The username is already in use", e.getMessage());
+        assertEquals("The username is already in use", e.getErrorDetails().getError().getMessage());
     }
 
     @Test
@@ -104,7 +104,7 @@ class UserManagementServiceImplTest {
             userManagementServiceImpl.createUser(user);
         });
 
-        assertEquals("The email is already in use", e.getMessage());
+        assertEquals("The email is already in use", e.getErrorDetails().getError().getMessage());
     }
 
 }

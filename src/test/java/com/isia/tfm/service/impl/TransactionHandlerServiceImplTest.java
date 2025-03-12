@@ -114,7 +114,7 @@ class TransactionHandlerServiceImplTest {
 
         CustomException e = assertThrows(CustomException.class, () -> callSaveSession(session));
 
-        assertEquals("User with username juanpereza not found", e.getMessage());
+        assertEquals("User with username juanpereza not found", e.getErrorDetails().getError().getMessage());
     }
 
     @Test
@@ -131,7 +131,7 @@ class TransactionHandlerServiceImplTest {
 
         CustomException e = assertThrows(CustomException.class, () -> callSaveSession(session));
 
-        assertEquals("The sessionId 1 was already created", e.getMessage());
+        assertEquals("The sessionId 1 was already created", e.getErrorDetails().getError().getMessage());
     }
 
     private void callSaveSession(Session session) {
