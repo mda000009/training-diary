@@ -38,8 +38,10 @@ public class ExerciseManagementServiceImpl implements ExerciseManagementService 
                 .toList();
         log.debug("Saved exercises");
 
+        CreateExercises201ResponseData data = new CreateExercises201ResponseData();
+        data.setExercises(returnExerciseList);
         CreateExercises201Response createExercises201Response = new CreateExercises201Response();
-        createExercises201Response.setExercises(returnExerciseList);
+        createExercises201Response.setData(data);
         return createExercises201Response;
     }
 

@@ -30,9 +30,15 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-                    example: User successfully created.
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                        example: juanperez
+                      message:
+                        type: string
+                        example: User successfully created.
         '400':
           description: Bad Request.
           content:
@@ -221,10 +227,13 @@ paths:
               schema:
                 type: object
                 properties:
-                  exercises:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ReturnExercise'
+                  data:
+                    type: object
+                    properties:
+                      exercises:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ReturnExercise'
         '400':
           description: Bad Request.
           content:
@@ -352,32 +361,42 @@ components:
     ReturnSession:
       type: object
       properties:
-        sessionId:
-          type: integer
-          description: Unique ID of the session.
-          example: 1
-        status:
-          type: string
-          description: Session status.
-          example: "Session successfully created"
-        savedTrainingVolumeSuccessfully:
-          type: string
-          description: Indicates whether the training volume has been saved successfully.
-          example: true
-        sentEmailSuccessfully:
-          type: string
-          description: Indicates whether the email has been sent successfully.
-          example: true
-        savedExcelSuccessfully:
-          description: Indicates whether the Excel has been saved successfully.
-          type: string
-          example: true
+        data:
+          type: object
+          properties:
+            sessionId:
+              type: integer
+              description: Unique ID of the session.
+              example: 1
+            message:
+              type: string
+              description: Indicates whether the session has been created successfully.
+              example: "Session successfully created"
+          required:
+            - sessionId
+            - message
+        additionalInformation:
+          type: object
+          properties:
+            savedTrainingVolume:
+              type: string
+              description: Indicates whether the training volume has been saved.
+              example: true
+            sentEmail:
+              type: string
+              description: Indicates whether the email has been sent.
+              example: true
+            savedExcel:
+              description: Indicates whether the Excel has been saved.
+              type: string
+              example: true
+          required:
+            - savedTrainingVolume
+            - sentEmail
+            - savedExcel
       required:
-        - sessionId
-        - status
-        - savedTrainingVolumeSuccessfully
-        - sentEmailSuccessfully
-        - savedExcelSuccessfully
+        - data
+        - additionalInformation
 
     TrainingVariable:
       type: object
@@ -433,13 +452,13 @@ components:
           type: integer
           description: Unique ID of the exercise.
           example: 1
-        status:
+        message:
           type: string
           description: Exercise status.
           example: "Exercise successfully created"
       required:
         - exerciseId
-        - status
+        - message
 
     Error:
       type: object

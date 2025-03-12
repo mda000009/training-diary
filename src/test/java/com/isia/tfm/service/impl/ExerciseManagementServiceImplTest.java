@@ -3,6 +3,7 @@ package com.isia.tfm.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isia.tfm.entity.ExerciseEntity;
 import com.isia.tfm.model.CreateExercises201Response;
+import com.isia.tfm.model.CreateExercises201ResponseData;
 import com.isia.tfm.model.CreateExercisesRequest;
 import com.isia.tfm.model.ReturnExercise;
 import com.isia.tfm.repository.ExerciseRepository;
@@ -54,7 +55,9 @@ class ExerciseManagementServiceImplTest {
         CreateExercises201Response response = exerciseManagementServiceImpl.createExercises(createExercisesRequest);
 
         CreateExercises201Response expectedResponse = new CreateExercises201Response();
-        expectedResponse.setExercises(Collections.singletonList(new ReturnExercise(1, "Exercise successfully created")));
+        CreateExercises201ResponseData data = new CreateExercises201ResponseData();
+        data.setExercises(Collections.singletonList(new ReturnExercise(1, "Exercise successfully created")));
+        expectedResponse.setData(data);
 
         assertEquals(expectedResponse, response);
     }

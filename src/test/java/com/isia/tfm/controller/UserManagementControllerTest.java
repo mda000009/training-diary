@@ -1,6 +1,7 @@
 package com.isia.tfm.controller;
 
 import com.isia.tfm.model.CreateUser201Response;
+import com.isia.tfm.model.CreateUser201ResponseData;
 import com.isia.tfm.model.User;
 import com.isia.tfm.service.UserManagementService;
 import com.isia.tfm.testutils.TestUtils;
@@ -39,7 +40,10 @@ class UserManagementControllerTest {
     void createUser() {
         User user = TestUtils.readMockFile("user", User.class);
         CreateUser201Response createUser201Response = new CreateUser201Response();
-        createUser201Response.setMessage("User successfully created.");
+        CreateUser201ResponseData data = new CreateUser201ResponseData();
+        data.setUsername(user.getUsername());
+        data.setMessage("User successfully created.");
+        createUser201Response.setData(data);
 
         when(userManagementService.createUser(any(User.class))).thenReturn(createUser201Response);
 

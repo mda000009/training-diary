@@ -25,6 +25,8 @@ import java.util.*;
 @Service
 public class SessionManagementServiceImpl implements SessionManagementService {
 
+    private static final String TRUE_STRING = "true";
+
     TransactionHandlerService transactionHandlerService;
     ExerciseRepository exerciseRepository;
     JavaMailSender emailSender;
@@ -50,7 +52,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         if (calculateAndSaveTrainingVolume) {
             try {
                 transactionHandlerService.saveTrainingVolume(session);
-                returnSession.setSavedTrainingVolumeSuccessfully("true");
+                returnSession.getAdditionalInformation().setSavedTrainingVolume(TRUE_STRING);
                 log.debug("Training volume for all exercises saved");
             } catch (Exception e) {
                 log.error("Training volume could not be calculated and saved");
@@ -59,7 +61,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         if (sendEmail && destinationEmail != null && !destinationEmail.isEmpty()) {
             try {
                 sendTrainingSessionEmail(destinationEmail, session);
-                returnSession.setSentEmailSuccessfully("true");
+                returnSession.getAdditionalInformation().setSentEmail(TRUE_STRING);
                 log.debug("Email successfully sent");
             } catch (Exception e) {
                 log.error("Email could not be sent");
@@ -68,7 +70,7 @@ public class SessionManagementServiceImpl implements SessionManagementService {
         if (saveExcel && excelFilePath != null && !excelFilePath.isEmpty()) {
             try {
                 createExcelFile(session, exerciseEntityList, excelFilePath);
-                returnSession.setSavedExcelSuccessfully("true");
+                returnSession.getAdditionalInformation().setSavedExcel(TRUE_STRING);
                 log.debug("Excel saved");
             } catch (Exception e) {
                 log.error("Excel not be saved");

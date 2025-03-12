@@ -1,6 +1,7 @@
 package com.isia.tfm.controller;
 
 import com.isia.tfm.model.CreateExercises201Response;
+import com.isia.tfm.model.CreateExercises201ResponseData;
 import com.isia.tfm.model.CreateExercisesRequest;
 import com.isia.tfm.model.ReturnExercise;
 import com.isia.tfm.service.ExerciseManagementService;
@@ -42,7 +43,9 @@ class ExerciseManagementControllerTest {
     void createExercises() {
         CreateExercisesRequest createExercisesRequest = TestUtils.readMockFile("exercises", CreateExercisesRequest.class);
         CreateExercises201Response createExercises201Response = new CreateExercises201Response();
-        createExercises201Response.setExercises(Collections.singletonList(new ReturnExercise(1, "Exercise successfully created")));
+        CreateExercises201ResponseData data = new CreateExercises201ResponseData();
+        data.setExercises(Collections.singletonList(new ReturnExercise(1, "Exercise successfully created")));
+        createExercises201Response.setData(data);
 
         when(exerciseManagementService.createExercises(any(CreateExercisesRequest.class))).thenReturn(createExercises201Response);
 

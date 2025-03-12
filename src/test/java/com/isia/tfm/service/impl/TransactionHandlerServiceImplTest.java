@@ -41,6 +41,8 @@ class TransactionHandlerServiceImplTest {
     @Mock
     private TrainingVariablesRepository trainingVariablesRepository;
 
+    private static final String FALSE_STRING = "false";
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -70,8 +72,10 @@ class TransactionHandlerServiceImplTest {
         ReturnSession response = transactionHandlerServiceImpl.saveSession(
                 session, Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
 
-        ReturnSession expectedResponse = new ReturnSession(1, "Session successfully created",
-                "false", "false", "false");
+        ReturnSessionData data = new ReturnSessionData(1,"Session successfully created");
+        ReturnSessionAdditionalInformation additionalInformation =
+                new ReturnSessionAdditionalInformation(FALSE_STRING, FALSE_STRING, FALSE_STRING);
+        ReturnSession expectedResponse = new ReturnSession(data, additionalInformation);
 
         assertEquals(expectedResponse, response);
     }

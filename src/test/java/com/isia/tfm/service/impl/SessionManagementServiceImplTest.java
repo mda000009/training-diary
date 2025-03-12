@@ -43,6 +43,8 @@ class SessionManagementServiceImplTest {
     @Mock
     private JavaMailSender emailSender;
 
+    private static final String TRUE_STRING = "true";
+
     @Value("${spring.mail.username}")
     private String senderEmail;
 
@@ -56,6 +58,10 @@ class SessionManagementServiceImplTest {
         Session session = TestUtils.readMockFile("session", Session.class);
         String destinationEmail = "0610809824@uma.es";
         String excelFilePath = "C:\\Users\\mda00009\\Desktop\\Excel_Files\\";
+        ReturnSessionData data = new ReturnSessionData(1,"Session successfully created");
+        ReturnSessionAdditionalInformation additionalInformation =
+                new ReturnSessionAdditionalInformation(TRUE_STRING, TRUE_STRING, TRUE_STRING);
+        ReturnSession expectedResponse = new ReturnSession(data, additionalInformation);
 
         sessionManagementServiceImpl = spy(sessionManagementServiceImpl);
         try {
@@ -67,21 +73,14 @@ class SessionManagementServiceImplTest {
         when(exerciseRepository.findAllById(any(List.class)))
                 .thenReturn(Collections.singletonList(new ExerciseEntity(1, "Bench Press")));
         when(transactionHandlerService.saveSession(any(Session.class), anyList()))
-                .thenReturn(new ReturnSession(1, "Session successfully created",
-                        "true", "true", "true"));
+                .thenReturn(expectedResponse);
 
         boolean flag = true;
-        ReturnSession response = sessionManagementServiceImpl.createSession(flag, flag, flag, session, destinationEmail, excelFilePath);
+        ReturnSession response =
+                sessionManagementServiceImpl.createSession(flag, flag, flag, session, destinationEmail, excelFilePath);
 
         verify(transactionHandlerService, times(1)).saveTrainingVolume(any(Session.class));
         verify(emailSender, times(1)).send(any(SimpleMailMessage.class));
-
-        ReturnSession expectedResponse = new ReturnSession();
-        expectedResponse.setSessionId(1);
-        expectedResponse.setStatus("Session successfully created");
-        expectedResponse.setSavedTrainingVolumeSuccessfully("true");
-        expectedResponse.setSentEmailSuccessfully("true");
-        expectedResponse.setSavedExcelSuccessfully("true");
 
         assertEquals(expectedResponse, response);
     }

@@ -1,6 +1,8 @@
 package com.isia.tfm.controller;
 
 import com.isia.tfm.model.ReturnSession;
+import com.isia.tfm.model.ReturnSessionAdditionalInformation;
+import com.isia.tfm.model.ReturnSessionData;
 import com.isia.tfm.model.Session;
 import com.isia.tfm.service.SessionManagementService;
 import com.isia.tfm.testutils.TestUtils;
@@ -30,6 +32,8 @@ class SessionManagementControllerTest {
     @Mock
     private SessionManagementService sessionManagementService;
 
+    private static final String TRUE_STRING = "true";
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -38,16 +42,15 @@ class SessionManagementControllerTest {
     @Test
     void createSession() {
         Session session = TestUtils.readMockFile("session", Session.class);
-        ReturnSession returnSession = new ReturnSession();
-        returnSession.setSessionId(1);
-        returnSession.setStatus("Session successfully created");
-        returnSession.setSavedTrainingVolumeSuccessfully("true");
-        returnSession.setSentEmailSuccessfully("true");
-        returnSession.setSavedExcelSuccessfully("true");
+        ReturnSessionData data = new ReturnSessionData(1, "Session successfully created");
+        ReturnSessionAdditionalInformation additionalInformation =
+                new ReturnSessionAdditionalInformation(TRUE_STRING, TRUE_STRING, TRUE_STRING);
+        ReturnSession returnSession = new ReturnSession(data, additionalInformation);
         String destinationEmail = "0610809824@uma.es";
         String excelFilePath = "C:\\Users\\mda00009\\Desktop\\Excel_Files\\";
 
-        when(sessionManagementService.createSession(anyBoolean(), anyBoolean(), anyBoolean(), any(Session.class), anyString(), anyString())).thenReturn(returnSession);
+        when(sessionManagementService.createSession(anyBoolean(), anyBoolean(), anyBoolean(), any(Session.class), anyString(), anyString()))
+                .thenReturn(returnSession);
 
         boolean flag = true;
         ResponseEntity<ReturnSession> response = sessionManagementController.createSession(
