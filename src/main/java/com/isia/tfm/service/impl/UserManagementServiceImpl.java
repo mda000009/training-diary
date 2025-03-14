@@ -52,6 +52,7 @@ public class UserManagementServiceImpl implements UserManagementService {
         } else {
             throw new CustomException("500", "Internal Server Error", "Internal Server Error");
         }
+
         return createUser201Response;
     }
 

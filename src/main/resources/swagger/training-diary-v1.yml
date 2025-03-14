@@ -228,6 +228,27 @@ paths:
               required:
                 - exercises
       responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      exercises:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ReturnExercise'
+              example:
+                data:
+                  exercises:
+                    - exerciseId: 1
+                      message: "The exerciseId was already created"
+                    - exerciseId: 2
+                      message: "The exerciseId was already created"
         '201':
           description: Created.
           content:
@@ -242,6 +263,34 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/ReturnExercise'
+              example:
+                data:
+                  exercises:
+                    - exerciseId: 1
+                      message: "Exercise successfully created"
+                    - exerciseId: 2
+                      message: "Exercise successfully created"
+        '207':
+          description: Multi-Status.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      exercises:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ReturnExercise'
+              example:
+                data:
+                  exercises:
+                    - exerciseId: 1
+                      message: "Exercise successfully created"
+                    - exerciseId: 2
+                      message: "The exerciseId was already created"
         '400':
           description: Bad Request.
           content:
@@ -470,6 +519,7 @@ components:
       required:
         - exerciseId
         - message
+
     ErrorDetails:
       type: object
       properties:
