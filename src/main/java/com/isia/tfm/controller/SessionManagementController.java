@@ -28,6 +28,7 @@ public class SessionManagementController implements SessionManagementApi {
                                                        String destinationEmail, String excelFilePath) {
         ReturnSession response = sessionManagementService.createSession(
                 calculateAndSaveTrainingVolume, sendEmail, saveExcel, session, destinationEmail, excelFilePath);
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

@@ -15,7 +15,8 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import jakarta.validation.ConstraintViolationException;
-import com.isia.tfm.model.Error;
+import com.isia.tfm.model.ErrorDetails;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -36,33 +37,33 @@ class GlobalExceptionHandlerTest {
     void testHandleValidationException() {
         BindingResult bindingResult = new BeanPropertyBindingResult(null, "objectName");
         MethodArgumentNotValidException ex = new MethodArgumentNotValidException(null, bindingResult);
-        ResponseEntity<Error> response = globalExceptionHandler.handleValidationException(ex);
+        ResponseEntity<ErrorDetails> response = globalExceptionHandler.handleValidationException(ex);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("The request does not meet the validations", response.getBody().getMessage());
+        assertEquals("The request does not meet the validations", response.getBody().getError().getMessage());
     }
 
     @Test
     void testHandleConstraintViolationException() {
         ConstraintViolationException ex = new ConstraintViolationException(null);
-        ResponseEntity<Error> response = globalExceptionHandler.handleConstraintViolationException(ex);
+        ResponseEntity<ErrorDetails> response = globalExceptionHandler.handleConstraintViolationException(ex);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("The request does not meet the validations", response.getBody().getMessage());
+        assertEquals("The request does not meet the validations", response.getBody().getError().getMessage());
     }
 
     @Test
     void testHandleCustomException() {
         CustomException ex = new CustomException("409", "Conflict", "The username is already in use");
-        ResponseEntity<Error> response = globalExceptionHandler.handleCustomException(ex);
+        ResponseEntity<ErrorDetails> response = globalExceptionHandler.handleCustomException(ex);
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertEquals("The username is already in use", response.getBody().getMessage());
+        assertEquals("The username is already in use", response.getBody().getError().getMessage());
     }
 
     @Test
     void testHandleInvalidAttributeName() {
         UnrecognizedPropertyException ex = new UnrecognizedPropertyException(null, null, null, null, "invalidProperty", null);
-        ResponseEntity<Error> response = globalExceptionHandler.handleInvalidAttributeName(ex);
+        ResponseEntity<ErrorDetails> response = globalExceptionHandler.handleInvalidAttributeName(ex);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Attribute name 'invalidProperty' is incorrect.", response.getBody().getMessage());
+        assertEquals("Attribute name 'invalidProperty' is incorrect.", response.getBody().getError().getMessage());
     }
 
 }

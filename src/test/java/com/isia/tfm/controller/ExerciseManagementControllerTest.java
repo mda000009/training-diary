@@ -1,10 +1,12 @@
 package com.isia.tfm.controller;
 
-import com.isia.tfm.model.CreateExercises201Response;
+import com.isia.tfm.model.CreateExercises200Response;
+import com.isia.tfm.model.CreateExercises200ResponseData;
 import com.isia.tfm.model.CreateExercisesRequest;
 import com.isia.tfm.model.ReturnExercise;
 import com.isia.tfm.service.ExerciseManagementService;
 import com.isia.tfm.testutils.TestUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -17,7 +19,8 @@ import org.springframework.boot.test.autoconfigure.actuate.observability.AutoCon
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,16 +42,61 @@ class ExerciseManagementControllerTest {
     }
 
     @Test
-    void createExercises() {
+    void createExercises201() {
         CreateExercisesRequest createExercisesRequest = TestUtils.readMockFile("exercises", CreateExercisesRequest.class);
-        CreateExercises201Response createExercises201Response = new CreateExercises201Response();
-        createExercises201Response.setExercises(Collections.singletonList(new ReturnExercise(1, "Exercise successfully created")));
+        CreateExercises200Response createExercises200Response = new CreateExercises200Response();
+        CreateExercises200ResponseData data = new CreateExercises200ResponseData();
+        List<ReturnExercise> returnExerciseList = new ArrayList<>();
+        returnExerciseList.add(new ReturnExercise(1, "Exercise successfully created"));
+        returnExerciseList.add(new ReturnExercise(2, "Exercise successfully created"));
+        data.setExercises(returnExerciseList);
+        createExercises200Response.setData(data);
 
-        when(exerciseManagementService.createExercises(any(CreateExercisesRequest.class))).thenReturn(createExercises201Response);
+        when(exerciseManagementService.createExercises(any(CreateExercisesRequest.class))).thenReturn(Pair.of(createExercises200Response, "201"));
 
-        ResponseEntity<CreateExercises201Response> response = exerciseManagementController.createExercises(createExercisesRequest);
+        ResponseEntity<CreateExercises200Response> response = exerciseManagementController.createExercises(createExercisesRequest);
 
-        ResponseEntity<CreateExercises201Response> expectedResponse = new ResponseEntity<>(createExercises201Response, HttpStatus.CREATED);
+        ResponseEntity<CreateExercises200Response> expectedResponse = new ResponseEntity<>(createExercises200Response, HttpStatus.CREATED);
+
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void createExercises200() {
+        CreateExercisesRequest createExercisesRequest = TestUtils.readMockFile("exercises", CreateExercisesRequest.class);
+        CreateExercises200Response createExercises200Response = new CreateExercises200Response();
+        CreateExercises200ResponseData data = new CreateExercises200ResponseData();
+        List<ReturnExercise> returnExerciseList = new ArrayList<>();
+        returnExerciseList.add(new ReturnExercise(1, "The exerciseId was already created"));
+        returnExerciseList.add(new ReturnExercise(2, "The exerciseId was already created"));
+        data.setExercises(returnExerciseList);
+        createExercises200Response.setData(data);
+
+        when(exerciseManagementService.createExercises(any(CreateExercisesRequest.class))).thenReturn(Pair.of(createExercises200Response, "200"));
+
+        ResponseEntity<CreateExercises200Response> response = exerciseManagementController.createExercises(createExercisesRequest);
+
+        ResponseEntity<CreateExercises200Response> expectedResponse = new ResponseEntity<>(createExercises200Response, HttpStatus.OK);
+
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void createExercises207() {
+        CreateExercisesRequest createExercisesRequest = TestUtils.readMockFile("exercises", CreateExercisesRequest.class);
+        CreateExercises200Response createExercises200Response = new CreateExercises200Response();
+        CreateExercises200ResponseData data = new CreateExercises200ResponseData();
+        List<ReturnExercise> returnExerciseList = new ArrayList<>();
+        returnExerciseList.add(new ReturnExercise(1, "Exercise successfully created"));
+        returnExerciseList.add(new ReturnExercise(2, "The exerciseId was already created"));
+        data.setExercises(returnExerciseList);
+        createExercises200Response.setData(data);
+
+        when(exerciseManagementService.createExercises(any(CreateExercisesRequest.class))).thenReturn(Pair.of(createExercises200Response, "207"));
+
+        ResponseEntity<CreateExercises200Response> response = exerciseManagementController.createExercises(createExercisesRequest);
+
+        ResponseEntity<CreateExercises200Response> expectedResponse = new ResponseEntity<>(createExercises200Response, HttpStatus.MULTI_STATUS);
 
         assertEquals(expectedResponse, response);
     }
