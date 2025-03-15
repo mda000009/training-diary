@@ -25,6 +25,7 @@ public class UserManagementController implements UserManagementApi {
     @Override
     public ResponseEntity<CreateUser201Response> createUser(User user) {
         CreateUser201Response response = userManagementService.createUser(user);
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

@@ -3,6 +3,10 @@
     {
       "exerciseId": 1,
       "exerciseName": "Bench Press"
+    },
+    {
+      "exerciseId": 2,
+      "exerciseName": "Squat"
     }
   ]
 }

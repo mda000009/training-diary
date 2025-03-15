@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isia.tfm.entity.ApplicationUserEntity;
 import com.isia.tfm.exception.CustomException;
 import com.isia.tfm.model.CreateUser201Response;
+import com.isia.tfm.model.CreateUser201ResponseData;
 import com.isia.tfm.model.User;
 import com.isia.tfm.repository.ApplicationUserRepository;
 import com.isia.tfm.testutils.TestUtils;
@@ -61,8 +62,11 @@ class UserManagementServiceImplTest {
 
         CreateUser201Response response = userManagementServiceImpl.createUser(user);
 
+        CreateUser201ResponseData data = new CreateUser201ResponseData();
+        data.setUsername(user.getUsername());
+        data.setMessage("User successfully created.");
         CreateUser201Response expectedResponse = new CreateUser201Response();
-        expectedResponse.setMessage("User successfully created.");
+        expectedResponse.setData(data);
 
         assertEquals(expectedResponse, response);
     }
@@ -82,7 +86,7 @@ class UserManagementServiceImplTest {
             userManagementServiceImpl.createUser(user);
         });
 
-        assertEquals("The username is already in use", e.getMessage());
+        assertEquals("The username is already in use", e.getErrorDetails().getError().getMessage());
     }
 
     @Test
@@ -100,7 +104,7 @@ class UserManagementServiceImplTest {
             userManagementServiceImpl.createUser(user);
         });
 
-        assertEquals("The email is already in use", e.getMessage());
+        assertEquals("The email is already in use", e.getErrorDetails().getError().getMessage());
     }
 
 }

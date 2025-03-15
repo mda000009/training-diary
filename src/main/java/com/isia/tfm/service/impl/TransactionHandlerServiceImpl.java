@@ -2,9 +2,7 @@ package com.isia.tfm.service.impl;
 
 import com.isia.tfm.entity.*;
 import com.isia.tfm.exception.CustomException;
-import com.isia.tfm.model.ReturnSession;
-import com.isia.tfm.model.Session;
-import com.isia.tfm.model.TrainingVariable;
+import com.isia.tfm.model.*;
 import com.isia.tfm.repository.*;
 import com.isia.tfm.service.TransactionHandlerService;
 import com.isia.tfm.utils.Utils;
@@ -49,8 +47,12 @@ public class TransactionHandlerServiceImpl implements TransactionHandlerService 
         if (!sessionRepository.findById(sessionEntity.getSessionId()).isPresent()) {
             sessionRepository.save(sessionEntity);
             saveSessionExercises(exerciseEntityList, sessionEntity, session.getTrainingVariables());
-            return new ReturnSession(sessionEntity.getSessionId(), "Session successfully created",
-                    FALSE_STRING, FALSE_STRING, FALSE_STRING);
+            ReturnSessionData data = new ReturnSessionData(
+                    sessionEntity.getSessionId(), "Session successfully created");
+            ReturnSessionAdditionalInformation additionalInformation =
+                    new ReturnSessionAdditionalInformation(FALSE_STRING, FALSE_STRING, FALSE_STRING);
+
+            return new ReturnSession(data, additionalInformation);
         } else {
             throw new CustomException("409", "Conflict", "The sessionId " + session.getSessionId().toString() + " was already created");
         }

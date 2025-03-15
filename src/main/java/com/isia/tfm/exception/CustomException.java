@@ -1,6 +1,7 @@
 package com.isia.tfm.exception;
 
-import com.isia.tfm.model.Error;
+import com.isia.tfm.model.ErrorDetails;
+import com.isia.tfm.model.ErrorDetailsError;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,12 +9,11 @@ import lombok.Setter;
 @Setter
 public class CustomException extends RuntimeException {
 
-    private final transient Error error;
+    private final transient ErrorDetails errorDetails;
 
-    public CustomException(String status, String error, String message) {
-        super(message);
-        this.error = new Error(status, error);
-        this.error.setMessage(message);
+    public CustomException(String status, String description, String message) {
+        ErrorDetailsError errorDetailsError = new ErrorDetailsError(status, description, message);
+        this.errorDetails = new ErrorDetails(errorDetailsError);
     }
 
 }

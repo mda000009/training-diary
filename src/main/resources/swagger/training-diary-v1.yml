@@ -30,61 +30,71 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
-                    example: User successfully created.
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                        example: juanperez
+                      message:
+                        type: string
+                        example: User successfully created.
         '400':
           description: Bad Request.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDetails'
               examples:
                 badRequest:
                   summary: Invalid request error
                   value:
-                    status: "400"
-                    error: "Bad Request"
-                    message: "There are fields that do not comply with the specified format."
+                    error:
+                      status: "400"
+                      description: "Bad Request"
+                      message: "There are fields that do not comply with the specified format."
         '404':
           description: Not found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDetails'
               examples:
                 badRequest:
                   summary: Not found
                   value:
-                    status: "404"
-                    error: "Not found"
-                    message: "Resource not found."
+                    error:
+                      status: "404"
+                      description: "Not found"
+                      message: "Resource not found."
         '409':
           description: Conflict.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDetails'
               examples:
                 conflict:
                   summary: There are conflicts in some data
                   value:
-                    status: "409"
-                    error: "Conflict"
-                    message: "There are conflicts in some fields."
+                    error:
+                      status: "409"
+                      description: "Conflict"
+                      message: "There are conflicts in some fields."
         '500':
           description: Internal Server Error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDetails'
               examples:
                 internalServerError:
                   summary: Internal Server Error
                   value:
-                    status: "500"
-                    error: "Internal Server Error"
-                    message: "Internal Server Error."
+                    error:
+                      status: "500"
+                      description: "Internal Server Error"
+                      message: "Internal Server Error."
 
   /createSession:
     post:
@@ -145,53 +155,57 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDetails'
               examples:
                 badRequest:
                   summary: Invalid request error
                   value:
-                    status: "400"
-                    error: "Bad Request"
-                    message: "There are fields that do not comply with the specified format."
+                    error:
+                      status: "400"
+                      description: "Bad Request"
+                      message: "There are fields that do not comply with the specified format."
         '404':
           description: Not found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDetails'
               examples:
                 badRequest:
                   summary: Not found
                   value:
-                    status: "404"
-                    error: "Not found"
-                    message: "Resource not found."
+                    error:
+                      status: "404"
+                      description: "Not found"
+                      message: "Resource not found."
         '409':
           description: Conflict.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDetails'
               examples:
                 conflict:
                   summary: There are conflicts in some data
                   value:
-                    status: "409"
-                    error: "Conflict"
-                    message: "There are conflicts in some fields."
+                    error:
+                      status: "409"
+                      description: "Conflict"
+                      message: "There are conflicts in some fields."
         '500':
           description: Internal Server Error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDetails'
               examples:
                 internalServerError:
                   summary: Internal Server Error
                   value:
-                    status: "500"
-                    error: "Internal Server Error"
-                    message: "Internal Server Error."
+                    error:
+                      status: "500"
+                      description: "Internal Server Error"
+                      message: "Internal Server Error."
   /createExercises:
     post:
       summary: Create a list of exercises
@@ -214,6 +228,27 @@ paths:
               required:
                 - exercises
       responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      exercises:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ReturnExercise'
+              example:
+                data:
+                  exercises:
+                    - exerciseId: 1
+                      message: "The exerciseId was already created"
+                    - exerciseId: 2
+                      message: "The exerciseId was already created"
         '201':
           description: Created.
           content:
@@ -221,49 +256,83 @@ paths:
               schema:
                 type: object
                 properties:
+                  data:
+                    type: object
+                    properties:
+                      exercises:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ReturnExercise'
+              example:
+                data:
                   exercises:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ReturnExercise'
+                    - exerciseId: 1
+                      message: "Exercise successfully created"
+                    - exerciseId: 2
+                      message: "Exercise successfully created"
+        '207':
+          description: Multi-Status.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      exercises:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ReturnExercise'
+              example:
+                data:
+                  exercises:
+                    - exerciseId: 1
+                      message: "Exercise successfully created"
+                    - exerciseId: 2
+                      message: "The exerciseId was already created"
         '400':
           description: Bad Request.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDetails'
               examples:
                 badRequest:
                   summary: Invalid request error
                   value:
-                    status: "400"
-                    error: "Bad Request"
-                    message: "There are fields that do not comply with the specified format."
+                    error:
+                      status: "400"
+                      description: "Bad Request"
+                      message: "There are fields that do not comply with the specified format."
         '404':
           description: Not found.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDetails'
               examples:
                 badRequest:
                   summary: Not found
                   value:
-                    status: "404"
-                    error: "Not found"
-                    message: "Resource not found."
+                    error:
+                      status: "404"
+                      description: "Not found"
+                      message: "Resource not found."
         '500':
           description: Internal Server Error.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDetails'
               examples:
                 internalServerError:
                   summary: Internal Server Error
                   value:
-                    status: "500"
-                    error: "Internal Server Error"
-                    message: "Internal Server Error."
+                    error:
+                      status: "500"
+                      description: "Internal Server Error"
+                      message: "Internal Server Error."
 
 components:
   schemas:
@@ -352,32 +421,42 @@ components:
     ReturnSession:
       type: object
       properties:
-        sessionId:
-          type: integer
-          description: Unique ID of the session.
-          example: 1
-        status:
-          type: string
-          description: Session status.
-          example: "Session successfully created"
-        savedTrainingVolumeSuccessfully:
-          type: string
-          description: Indicates whether the training volume has been saved successfully.
-          example: true
-        sentEmailSuccessfully:
-          type: string
-          description: Indicates whether the email has been sent successfully.
-          example: true
-        savedExcelSuccessfully:
-          description: Indicates whether the Excel has been saved successfully.
-          type: string
-          example: true
+        data:
+          type: object
+          properties:
+            sessionId:
+              type: integer
+              description: Unique ID of the session.
+              example: 1
+            message:
+              type: string
+              description: Indicates whether the session has been created successfully.
+              example: "Session successfully created"
+          required:
+            - sessionId
+            - message
+        additionalInformation:
+          type: object
+          properties:
+            savedTrainingVolume:
+              type: string
+              description: Indicates whether the training volume has been saved.
+              example: true
+            sentEmail:
+              type: string
+              description: Indicates whether the email has been sent.
+              example: true
+            savedExcel:
+              description: Indicates whether the Excel has been saved.
+              type: string
+              example: true
+          required:
+            - savedTrainingVolume
+            - sentEmail
+            - savedExcel
       required:
-        - sessionId
-        - status
-        - savedTrainingVolumeSuccessfully
-        - sentEmailSuccessfully
-        - savedExcelSuccessfully
+        - data
+        - additionalInformation
 
     TrainingVariable:
       type: object
@@ -433,29 +512,35 @@ components:
           type: integer
           description: Unique ID of the exercise.
           example: 1
-        status:
+        message:
           type: string
           description: Exercise status.
           example: "Exercise successfully created"
       required:
         - exerciseId
-        - status
+        - message
 
-    Error:
+    ErrorDetails:
       type: object
       properties:
-        status:
-          type: string
-          description: HTTP status code of the error.
-          example: "400"
         error:
-          type: string
-          description: Description of the error type.
-          example: "Bad Request"
-        message:
-          type: string
-          description: Detailed error message.
-          example: "Mandatory fields are missing or the data is invalid"
+          type: object
+          properties:
+            status:
+              type: string
+              description: HTTP status code of the error.
+              example: "400"
+            description:
+              type: string
+              description: Description of the error type.
+              example: "Bad Request"
+            message:
+              type: string
+              description: Detailed error message.
+              example: "Mandatory fields are missing or the data is invalid"
+          required:
+            - status
+            - description
+            - message
       required:
-        - status
         - error

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isia.tfm.entity.ApplicationUserEntity;
 import com.isia.tfm.exception.CustomException;
 import com.isia.tfm.model.CreateUser201Response;
+import com.isia.tfm.model.CreateUser201ResponseData;
 import com.isia.tfm.model.User;
 import com.isia.tfm.repository.ApplicationUserRepository;
 import com.isia.tfm.service.UserManagementService;
@@ -44,10 +45,14 @@ public class UserManagementServiceImpl implements UserManagementService {
         applicationUserEntity = applicationUserRepository.save(applicationUserEntity);
         if (applicationUserEntity.getUsername() != null) {
             log.debug("User successfully created");
-            createUser201Response.setMessage("User successfully created.");
+            CreateUser201ResponseData data = new CreateUser201ResponseData();
+            data.setUsername(user.getUsername());
+            data.setMessage("User successfully created.");
+            createUser201Response.setData(data);
         } else {
             throw new CustomException("500", "Internal Server Error", "Internal Server Error");
         }
+
         return createUser201Response;
     }
 
