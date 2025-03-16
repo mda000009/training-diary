@@ -2,11 +2,11 @@ spring.application.name: training-diary
 
 spring:
   datasource:
-    url: jdbc:oracle:thin:@localhost:1521:xe
-    username: MANUEL
+    url: ${DB_URL}
+    username: ${DB_USER}
     password: ${DB_PASSWORD}
-    driver-class-name: oracle.jdbc.OracleDriver
-    platform: oracle
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    platform: mysql
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5
@@ -15,12 +15,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    database-platform: org.hibernate.dialect.OracleDialect
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    database-platform: org.hibernate.dialect.MySQLDialect
     show-sql: true
   mail:
     host: smtp.gmail.com
     port: 587
-    username: masterisiatfm@gmail.com
+    username: ${MAIL_USER}
     password: ${MAIL_PASSWORD}
     protocol: smtp
     tls: true
