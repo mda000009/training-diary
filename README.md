@@ -19,8 +19,9 @@ To contribute to the project, please contact us via the email provided in the "C
 
 ## Prerequisites
 - Install JDK 17.
-- Configure the system environment variables DB_PASSWORD and MAIL_PASSWORD. To know their values, please contact us via the email provided in the "Contact" section.
+- Configure the system environment variables DB_URL, DB_USER, DB_PASSWORD, MAIL_USER and MAIL_PASSWORD. To know their values, please contact us via the email provided in the "Contact" section.
 
 ## Other Considerations
+- For the database, a MySQL instance has been created on the AWS Free Tier. This free service is limited to 12 months. If you have any issues connecting to the database, please contact us using the email address provided in the "Contact" section.
 - Although there are only three endpoints, three controllers have been created because the idea is to continue expanding the project and create the rest of the operations (GET, PUT, and DELETE) in each controller.
 - Security has not been added to the API (JWT Token, OAuth 2.0...) because the project is purely educational and is not intended to be deployed on any remote server at the moment.
